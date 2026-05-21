@@ -10,11 +10,11 @@ export function SpanThumbnail() {
         <SubspaceMesh
           geometry={{ kind: 'plane', directions: [[1, 0, 0], [0, 1, 0]] }}
           color="#1abc9c"
-          opacity={0.2}
+          opacity={0.25}
           dim="2d"
         />
-        <VectorArrow vector={[2, 1, 0]} color="#e67e22" />
-        <VectorArrow vector={[0, 2, 0]} color="#9b59b6" />
+        <VectorArrow vector={[2, 0, 0]} color="#e67e22" label="v₁" showLabel />
+        <VectorArrow vector={[0, 2, 0]} color="#9b59b6" label="v₂" showLabel />
       </Scene>
     </div>
   )

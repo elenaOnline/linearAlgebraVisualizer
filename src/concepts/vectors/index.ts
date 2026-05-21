@@ -1,5 +1,5 @@
 import type { ConceptMeta } from '../../types'
-import { VectorsPlaceholder } from './VectorsPlaceholder'
+import { Vectors } from './Vectors'
 import { VectorsThumbnail } from './VectorsThumbnail'
 
 const meta: ConceptMeta = {
@@ -7,7 +7,7 @@ const meta: ConceptMeta = {
   title: 'Vectors',
   blurb: 'Directed quantities in Rⁿ — arrows from the origin with addition and scalar multiplication.',
   supports: ['2d', '3d'],
-  Component: VectorsPlaceholder,
+  Component: Vectors,
   Thumbnail: VectorsThumbnail,
 }
 

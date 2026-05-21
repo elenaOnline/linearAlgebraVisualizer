@@ -1,13 +1,13 @@
 import type { ConceptMeta } from '../../types'
-import { BasisPlaceholder } from './BasisPlaceholder'
+import { Basis } from './Basis'
 import { BasisThumbnail } from './BasisThumbnail'
 
 const meta: ConceptMeta = {
   id: 'basis',
   title: 'Basis',
-  blurb: 'A linearly independent spanning set — the minimal complete description of a vector space.',
+  blurb: 'A linearly independent spanning set — coordinates made unique.',
   supports: ['2d', '3d'],
-  Component: BasisPlaceholder,
+  Component: Basis,
   Thumbnail: BasisThumbnail,
 }
 

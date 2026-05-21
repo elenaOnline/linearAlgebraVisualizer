@@ -1,0 +1,174 @@
+/* Three-region layout for the Linear Maps concept page */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* Top: visualization */
+.vizRegion {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Det readout overlay */
+.detOverlay {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  background: rgba(22, 33, 62, 0.88);
+  border: 1px solid rgba(233, 69, 96, 0.35);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  z-index: 10;
+  pointer-events: none;
+  line-height: 1.7;
+  min-width: 140px;
+}
+
+.detValue {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.singularBadge {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(233, 69, 96, 0.2);
+  border: 1px solid rgba(233, 69, 96, 0.5);
+  color: var(--color-accent);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}
+
+/* Bottom row: sandbox + explanation side by side */
+.bottomRow {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  height: 300px;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sandboxRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.explanationRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ---- Sandbox controls ---- */
+.sandboxInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sandboxRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-4);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.sandboxSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 120px;
+}
+
+.sandboxLabel {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dimRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.togglesRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggleLabel input[type='checkbox'] {
+  accent-color: var(--color-accent);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+/* ---- Explanation panel ---- */
+.explainInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.explainInner p {
+  margin: 0;
+}
+
+.mathBlock {
+  margin: var(--space-2) 0;
+}
+
+.tryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tryList li::before {
+  content: '→ ';
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+}

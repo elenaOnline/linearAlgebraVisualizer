@@ -1,13 +1,13 @@
 import type { ConceptMeta } from '../../types'
-import { VectorSpacesPlaceholder } from './VectorSpacesPlaceholder'
+import { VectorSpaces } from './VectorSpaces'
 import { VectorSpacesThumbnail } from './VectorSpacesThumbnail'
 
 const meta: ConceptMeta = {
   id: 'vector-spaces',
   title: 'Vector Spaces',
-  blurb: 'Sets closed under addition and scalar multiplication — the abstract structure underlying linear algebra.',
+  blurb: 'Subsets of Rⁿ closed under addition and scalar multiplication — the subspace conditions.',
   supports: ['2d', '3d'],
-  Component: VectorSpacesPlaceholder,
+  Component: VectorSpaces,
   Thumbnail: VectorSpacesThumbnail,
 }
 

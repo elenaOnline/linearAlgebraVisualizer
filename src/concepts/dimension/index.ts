@@ -1,13 +1,13 @@
 import type { ConceptMeta } from '../../types'
-import { DimensionPlaceholder } from './DimensionPlaceholder'
+import { Dimension } from './Dimension'
 import { DimensionThumbnail } from './DimensionThumbnail'
 
 const meta: ConceptMeta = {
   id: 'dimension',
   title: 'Dimension',
-  blurb: 'The number of vectors in any basis — a well-defined invariant that measures the "degrees of freedom."',
+  blurb: 'The number of truly independent directions — the rank of the spanning set.',
   supports: ['2d', '3d'],
-  Component: DimensionPlaceholder,
+  Component: Dimension,
   Thumbnail: DimensionThumbnail,
 }
 

@@ -1,0 +1,269 @@
+/* Three-region layout for the Dimension concept page */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* Top: visualization */
+.vizRegion {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bottom row: sandbox + explanation side by side */
+.bottomRow {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  height: 320px;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sandboxRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.explanationRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ---- Sandbox controls ---- */
+.sandboxInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.dimRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sandboxLabel {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Dimension readout ---- */
+.dimReadout {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dimNumber {
+  font-size: var(--font-size-xl);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-span);
+  line-height: 1;
+}
+
+.dimLabel {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+.dimStats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+/* ---- Vector list ---- */
+.vectorList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.vectorRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  flex-wrap: wrap;
+}
+
+.vectorRowInvisible {
+  opacity: 0.45;
+}
+
+.visibilityToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  color: var(--color-text-muted);
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.visibilityToggle:hover {
+  color: var(--color-text);
+}
+
+.visibilityToggleActive {
+  color: var(--color-accent);
+}
+
+.vectorLabel {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  min-width: 24px;
+}
+
+.badge {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 100px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badgeIndependent {
+  background: rgba(46, 204, 113, 0.18);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.35);
+}
+
+.badgeDependent {
+  background: rgba(243, 156, 18, 0.18);
+  color: #f39c12;
+  border: 1px solid rgba(243, 156, 18, 0.35);
+}
+
+.badgeHidden {
+  background: rgba(160, 160, 176, 0.12);
+  color: var(--color-text-muted);
+  border: 1px solid rgba(160, 160, 176, 0.2);
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  padding: 2px 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+
+.removeBtn:hover:not(:disabled) {
+  color: var(--color-accent);
+  background: rgba(233, 69, 96, 0.12);
+}
+
+.removeBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ---- Add button ---- */
+.addRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.addBtn:hover:not(:disabled) {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.addBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ---- Explanation panel ---- */
+.explainInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.explainInner p {
+  margin: 0;
+}
+
+.mathBlock {
+  margin: var(--space-2) 0;
+}
+
+.tryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tryList li::before {
+  content: '→ ';
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+}
+
+/* ---- Thumbnail ---- */
+.thumbnailScene {
+  width: 100%;
+  height: 100%;
+}

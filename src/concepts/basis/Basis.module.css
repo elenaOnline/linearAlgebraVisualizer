@@ -1,0 +1,171 @@
+/* Three-region layout for the Basis concept page */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* Top: visualization */
+.vizRegion {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bottom row: sandbox + explanation side by side */
+.bottomRow {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  height: 300px;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sandboxRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.explanationRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ---- Sandbox controls ---- */
+.sandboxInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sandboxRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-4);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.sandboxSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 120px;
+}
+
+.sandboxLabel {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.dimRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ---- Verdict badges row ---- */
+.verdictRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.badgePass {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid rgba(46, 204, 113, 0.35);
+}
+
+.badgeFail {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+  border: 1px solid rgba(231, 76, 60, 0.35);
+}
+
+/* ---- Coordinates readout ---- */
+.coordsBox {
+  background: rgba(15, 52, 96, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.coordsRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.coordsLabel {
+  color: var(--color-text-muted);
+  min-width: 140px;
+}
+
+.coordsValue {
+  color: var(--color-text);
+}
+
+/* ---- Explanation panel ---- */
+.explainInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.explainInner p {
+  margin: 0;
+}
+
+.mathBlock {
+  margin: var(--space-2) 0;
+}
+
+.tryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tryList li::before {
+  content: '→ ';
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+}

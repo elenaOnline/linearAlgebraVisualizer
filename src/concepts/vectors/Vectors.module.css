@@ -1,0 +1,158 @@
+/* Three-region layout for the Vectors concept page */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* Top: visualization */
+.vizRegion {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Bottom row: sandbox + explanation side by side */
+.bottomRow {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  height: 280px;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sandboxRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.explanationRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ---- Sandbox controls ---- */
+.sandboxInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sandboxRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-4);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.sandboxSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 120px;
+}
+
+.sandboxLabel {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.normReadout {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  padding: 2px 0;
+}
+
+.normValue {
+  color: var(--color-text);
+}
+
+.togglesRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggleLabel input[type='checkbox'] {
+  accent-color: var(--color-accent);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.dimRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ---- Explanation panel ---- */
+.explainInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.explainInner h4 {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.explainInner p {
+  margin: 0;
+}
+
+.mathBlock {
+  margin: var(--space-2) 0;
+}
+
+.tryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tryList li::before {
+  content: '→ ';
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+}
+
+/* ---- Thumbnail ---- */
+.thumbnailScene {
+  width: 100%;
+  height: 100%;
+}

@@ -7,13 +7,16 @@ export function DimensionThumbnail() {
   return (
     <div className={styles.thumbnail}>
       <Scene dim="2d" frameloop="demand">
+        {/* Span: the full plane (dim=2) shown as two directions */}
         <SubspaceMesh
-          geometry={{ kind: 'line', directions: [[1, 0.5, 0]] }}
+          geometry={{ kind: 'plane', directions: [[1, 0, 0], [0, 1, 0]] }}
           color="#1abc9c"
-          opacity={0.5}
+          opacity={0.25}
           dim="2d"
         />
-        <VectorArrow vector={[2, 1, 0]} color="#f39c12" />
+        {/* Two independent vectors — one orange, one purple */}
+        <VectorArrow vector={[2, 0, 0]} color="#e67e22" showLabel={false} />
+        <VectorArrow vector={[0, 2, 0]} color="#9b59b6" showLabel={false} />
       </Scene>
     </div>
   )

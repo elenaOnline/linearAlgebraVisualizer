@@ -1,0 +1,215 @@
+/* Three-region layout for the Nullspace concept page */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* Top: visualization */
+.vizRegion {
+  flex: 1 1 0;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Rank-nullity overlay */
+.rankNullityOverlay {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  background: rgba(22, 33, 62, 0.88);
+  border: 1px solid rgba(231, 76, 60, 0.45);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  z-index: 10;
+  pointer-events: none;
+  line-height: 1.7;
+  min-width: 160px;
+}
+
+.rankNullityTitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-nullspace);
+  font-weight: 700;
+  margin-bottom: 2px;
+  letter-spacing: 0.04em;
+}
+
+.rankNullityRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.rankValue {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.nullityValue {
+  color: var(--color-nullspace);
+  font-weight: 600;
+}
+
+.sumRow {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 2px;
+  padding-top: 2px;
+  color: var(--color-span);
+  font-weight: 700;
+}
+
+.singularBadge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(231, 76, 60, 0.18);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  color: var(--color-nullspace);
+  font-size: 11px;
+}
+
+.invertibleBadge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: rgba(46, 204, 113, 0.15);
+  border: 1px solid rgba(46, 204, 113, 0.35);
+  color: #2ecc71;
+  font-size: 11px;
+}
+
+/* Bottom row: sandbox + explanation side by side */
+.bottomRow {
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  height: 310px;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.sandboxRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.explanationRegion {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4);
+}
+
+/* ---- Sandbox controls ---- */
+.sandboxInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sandboxLabel {
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-1);
+}
+
+.dimRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.constrainRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  user-select: none;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.constrainRow input[type='checkbox'] {
+  accent-color: var(--color-nullspace);
+  width: 14px;
+  height: 14px;
+  cursor: pointer;
+}
+
+.constrainRow.active {
+  color: var(--color-nullspace);
+}
+
+.controlsRow {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* ---- Explanation panel ---- */
+.explainInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.explainInner h4 {
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.explainInner p {
+  margin: 0;
+}
+
+.mathBlock {
+  margin: var(--space-2) 0;
+  overflow-x: auto;
+}
+
+.tryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.tryList li::before {
+  content: '→ ';
+  color: var(--color-nullspace);
+  font-family: var(--font-mono);
+}
+
+.rankNullityCallout {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+}
+
+.rankNullityCallout .highlight {
+  color: var(--color-nullspace);
+  font-weight: 700;
+}
