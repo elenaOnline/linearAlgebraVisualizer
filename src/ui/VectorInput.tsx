@@ -35,12 +35,14 @@ export function VectorInput({ value, onChange, dim, label }: VectorInputProps) {
           onChange={(v) => handleChange(0, v)}
           label="x"
           step={0.1}
+          showIntSlider
         />
         <NumberInput
           value={value[1]}
           onChange={(v) => handleChange(1, v)}
           label="y"
           step={0.1}
+          showIntSlider
         />
         {is3d && (
           <NumberInput
@@ -48,6 +50,7 @@ export function VectorInput({ value, onChange, dim, label }: VectorInputProps) {
             onChange={(v) => handleChange(2, v)}
             label="z"
             step={0.1}
+            showIntSlider
           />
         )}
       </div>

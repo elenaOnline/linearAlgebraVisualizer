@@ -3,6 +3,18 @@ import * as THREE from 'three'
 import type { SubspaceGeometry, Dim } from '../types'
 import { normalize } from '../linalg/vector'
 
+function BoxEdges({ size, color }: { size: number; color: string }) {
+  const edgesGeom = useMemo(() => {
+    const box = new THREE.BoxGeometry(size, size, size)
+    return new THREE.EdgesGeometry(box)
+  }, [size])
+  return (
+    <lineSegments geometry={edgesGeom}>
+      <lineBasicMaterial color={color} opacity={0.5} transparent />
+    </lineSegments>
+  )
+}
+
 interface SubspaceMeshProps {
   geometry: SubspaceGeometry
   color?: string
@@ -115,18 +127,24 @@ export function SubspaceMesh({
   }
 
   if (kind === 'space') {
-    // Whole space: render a large transparent box to indicate full volume
+    // Whole space: translucent filled box + visible wireframe outline.
+    // The box is a viewport clip — it shows "all of R³ is the subspace" while
+    // making clear the drawn boundary is not the actual edge of R³.
+    const BOX = PLANE_EXTENT
     return (
-      <mesh>
-        <boxGeometry args={[PLANE_EXTENT, PLANE_EXTENT, PLANE_EXTENT]} />
-        <meshBasicMaterial
-          color={color}
-          opacity={0.05}
-          transparent
-          side={THREE.BackSide}
-          depthWrite={false}
-        />
-      </mesh>
+      <group>
+        <mesh>
+          <boxGeometry args={[BOX, BOX, BOX]} />
+          <meshBasicMaterial
+            color={color}
+            opacity={0.07}
+            transparent
+            side={THREE.DoubleSide}
+            depthWrite={false}
+          />
+        </mesh>
+        <BoxEdges size={BOX} color={color} />
+      </group>
     )
   }
 

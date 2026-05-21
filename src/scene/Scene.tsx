@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import type { Dim } from '../types'
 import { Axes } from './Axes'
 import { Grid } from './Grid'
+import { DragProvider, useDragContext } from './DragContext'
 import styles from './Scene.module.css'
 
 interface SceneProps {
@@ -13,33 +14,46 @@ interface SceneProps {
   className?: string
 }
 
+// Reads DragContext to disable OrbitControls while a handle is being dragged.
+function SceneCanvas({ dim, children, frameloop = 'always' }: Omit<SceneProps, 'className'>) {
+  const { isDragging } = useDragContext()
+  return (
+    <Canvas frameloop={frameloop} gl={{ antialias: true }}>
+      {dim === '2d' ? (
+        <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={50} near={0.01} far={1000} />
+      ) : (
+        <PerspectiveCamera makeDefault position={[5, 4, 7]} fov={50} near={0.01} far={1000} />
+      )}
+
+      {dim === '3d' && (
+        <OrbitControls
+          enablePan={true}
+          enableZoom={true}
+          enableRotate={true}
+          makeDefault
+          enabled={!isDragging}
+        />
+      )}
+
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 10, 5]} intensity={0.8} />
+
+      <Axes dim={dim} />
+      <Grid dim={dim} />
+
+      {children}
+    </Canvas>
+  )
+}
+
 export function Scene({ dim, children, frameloop = 'always', className }: SceneProps) {
   return (
-    <div className={`${styles.sceneContainer} ${className ?? ''}`}>
-      <Canvas frameloop={frameloop} gl={{ antialias: true }}>
-        {dim === '2d' ? (
-          <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={50} near={0.01} far={1000} />
-        ) : (
-          <PerspectiveCamera makeDefault position={[5, 4, 7]} fov={50} near={0.01} far={1000} />
-        )}
-
-        {dim === '3d' && (
-          <OrbitControls
-            enablePan={true}
-            enableZoom={true}
-            enableRotate={true}
-            makeDefault
-          />
-        )}
-
-        <ambientLight intensity={0.6} />
-        <directionalLight position={[5, 10, 5]} intensity={0.8} />
-
-        <Axes dim={dim} />
-        <Grid dim={dim} />
-
-        {children}
-      </Canvas>
-    </div>
+    <DragProvider>
+      <div className={`${styles.sceneContainer} ${className ?? ''}`}>
+        <SceneCanvas dim={dim} frameloop={frameloop}>
+          {children}
+        </SceneCanvas>
+      </div>
+    </DragProvider>
   )
 }

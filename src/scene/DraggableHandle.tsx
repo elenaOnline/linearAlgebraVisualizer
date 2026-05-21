@@ -1,8 +1,9 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import type { ThreeEvent } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { Vec3, Dim } from '../types'
+import { useDragContext } from './DragContext'
 
 interface DraggableHandleProps {
   position: Vec3
@@ -20,10 +21,17 @@ export function DraggableHandle({
   dim,
 }: DraggableHandleProps) {
   const meshRef = useRef<THREE.Mesh>(null)
-  const { camera, gl, raycaster } = useThree()
+  const { camera, gl } = useThree()
+  const { setDragging } = useDragContext()
   const [isDragging, setIsDragging] = useState(false)
   const dragPlane = useRef(new THREE.Plane())
   const offset = useRef(new THREE.Vector3())
+  const raycasterRef = useRef(new THREE.Raycaster())
+  // Stable refs so native listeners never close over stale values
+  const onDragRef = useRef(onDrag)
+  useEffect(() => { onDragRef.current = onDrag }, [onDrag])
+  const dimRef = useRef(dim)
+  useEffect(() => { dimRef.current = dim }, [dim])
 
   const getPointerNDC = useCallback(
     (clientX: number, clientY: number) => {
@@ -39,10 +47,10 @@ export function DraggableHandle({
   const onPointerDown = useCallback(
     (e: ThreeEvent<PointerEvent>) => {
       e.stopPropagation()
-      setIsDragging(true)
       gl.domElement.setPointerCapture(e.pointerId)
+      setIsDragging(true)
+      setDragging(true) // disable OrbitControls for this scene
 
-      // Set up the drag plane perpendicular to camera
       const camDir = new THREE.Vector3()
       camera.getWorldDirection(camDir)
       dragPlane.current.setFromNormalAndCoplanarPoint(
@@ -50,55 +58,60 @@ export function DraggableHandle({
         new THREE.Vector3(position[0], position[1], position[2]),
       )
 
-      // Compute offset
       const ndc = getPointerNDC(e.clientX, e.clientY)
-      raycaster.setFromCamera(ndc, camera)
+      raycasterRef.current.setFromCamera(ndc, camera)
       const hitPoint = new THREE.Vector3()
-      raycaster.ray.intersectPlane(dragPlane.current, hitPoint)
+      raycasterRef.current.ray.intersectPlane(dragPlane.current, hitPoint)
       offset.current.set(
         hitPoint.x - position[0],
         hitPoint.y - position[1],
         hitPoint.z - position[2],
       )
     },
-    [camera, gl, position, raycaster, getPointerNDC],
+    [camera, gl, position, getPointerNDC, setDragging],
   )
 
-  const onPointerMove = useCallback(
-    (e: ThreeEvent<PointerEvent>) => {
-      if (!isDragging) return
+  // Native canvas listeners: fire on every pointermove regardless of cursor position
+  // (pointer is captured), so fast drags never lose the handle.
+  useEffect(() => {
+    if (!isDragging) return
+
+    const handleMove = (e: PointerEvent) => {
       const ndc = getPointerNDC(e.clientX, e.clientY)
-      raycaster.setFromCamera(ndc, camera)
+      raycasterRef.current.setFromCamera(ndc, camera)
       const hitPoint = new THREE.Vector3()
-      raycaster.ray.intersectPlane(dragPlane.current, hitPoint)
+      if (!raycasterRef.current.ray.intersectPlane(dragPlane.current, hitPoint)) return
       hitPoint.sub(offset.current)
 
-      let newPos: Vec3
-      if (dim === '2d') {
-        newPos = [hitPoint.x, hitPoint.y, 0]
-      } else {
-        newPos = [hitPoint.x, hitPoint.y, hitPoint.z]
-      }
-      onDrag(newPos)
-    },
-    [isDragging, camera, raycaster, onDrag, dim, getPointerNDC],
-  )
+      // Shift key → snap to nearest integer
+      const snap = (v: number) => (e.shiftKey ? Math.round(v) : v)
 
-  const onPointerUp = useCallback(
-    (e: ThreeEvent<PointerEvent>) => {
-      setIsDragging(false)
+      const newPos: Vec3 =
+        dimRef.current === '2d'
+          ? [snap(hitPoint.x), snap(hitPoint.y), 0]
+          : [snap(hitPoint.x), snap(hitPoint.y), snap(hitPoint.z)]
+      onDragRef.current(newPos)
+    }
+
+    const handleUp = (e: PointerEvent) => {
       gl.domElement.releasePointerCapture(e.pointerId)
-    },
-    [gl],
-  )
+      setIsDragging(false)
+      setDragging(false)
+    }
+
+    gl.domElement.addEventListener('pointermove', handleMove)
+    gl.domElement.addEventListener('pointerup', handleUp)
+    return () => {
+      gl.domElement.removeEventListener('pointermove', handleMove)
+      gl.domElement.removeEventListener('pointerup', handleUp)
+    }
+  }, [isDragging, camera, gl, getPointerNDC, setDragging])
 
   return (
     <mesh
       ref={meshRef}
       position={position}
       onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
     >
       <sphereGeometry args={[radius, 16, 16]} />
       <meshStandardMaterial
