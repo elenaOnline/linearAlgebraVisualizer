@@ -1,0 +1,16 @@
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--space-4);
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.placeholder h2 {
+  font-size: var(--font-size-xl);
+  color: var(--color-text);
+}

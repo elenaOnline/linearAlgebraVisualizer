@@ -1,0 +1,25 @@
+.callout {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border-left: 3px solid;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+.info {
+  background: rgba(52, 152, 219, 0.12);
+  border-color: var(--color-axis-z);
+  color: var(--color-text);
+}
+
+.warning {
+  background: rgba(243, 156, 18, 0.12);
+  border-color: var(--color-basis);
+  color: var(--color-text);
+}
+
+.success {
+  background: rgba(46, 204, 113, 0.12);
+  border-color: var(--color-axis-y);
+  color: var(--color-text);
+}

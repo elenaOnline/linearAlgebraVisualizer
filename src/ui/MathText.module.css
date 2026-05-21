@@ -1,0 +1,10 @@
+.inline {
+  display: inline;
+}
+
+.display {
+  display: block;
+  text-align: center;
+  margin: var(--space-3) 0;
+  overflow-x: auto;
+}
