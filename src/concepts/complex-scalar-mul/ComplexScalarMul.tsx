@@ -50,9 +50,10 @@ interface ComponentPairProps {
   input: Complex
   scaled: Complex
   onDragInput: (pos: Vec3) => void
+  name: string
 }
 
-function ComponentPair({ input, scaled, onDragInput }: ComponentPairProps) {
+function ComponentPair({ input, scaled, onDragInput, name }: ComponentPairProps) {
   const inputMag = complexMag(input)
   const inputArg = complexArg(input)
   const scaledArg = complexArg(scaled)
@@ -60,8 +61,8 @@ function ComponentPair({ input, scaled, onDragInput }: ComponentPairProps) {
   return (
     <>
       {/* Vector arrows from origin */}
-      <VectorArrow vector={[input[0], input[1], 0]} color={V1} />
-      <VectorArrow vector={[scaled[0], scaled[1], 0]} color={VP} />
+      <VectorArrow vector={[input[0], input[1], 0]} color={V1} label={name} showLabel />
+      <VectorArrow vector={[scaled[0], scaled[1], 0]} color={VP} label={`c·${name}`} showLabel />
       {/* Rotation arc */}
       {inputMag > 0.01 && (
         <RotationArc
@@ -105,6 +106,7 @@ export function ComplexScalarMul() {
                 input={vec[0]}
                 scaled={scaledZ1}
                 onDragInput={(pos) => setVec([[pos[0], pos[1]], vec[1]])}
+                name="z₁"
               />
             </ArgandPlane>
           </div>
@@ -129,6 +131,7 @@ export function ComplexScalarMul() {
                 input={vec[1]}
                 scaled={scaledZ2}
                 onDragInput={(pos) => setVec([vec[0], [pos[0], pos[1]]])}
+                name="z₂"
               />
             </ArgandPlane>
           </div>

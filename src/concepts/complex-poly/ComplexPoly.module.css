@@ -186,3 +186,9 @@
   content: '→ ';
   color: var(--ink-3);
 }
+
+.angleSlider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: var(--ink);
+}

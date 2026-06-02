@@ -81,7 +81,7 @@ function SceneContent({ geo, vectorEntries, dim, onDrag }: SceneContentProps) {
 // ---------------------------------------------------------------------------
 
 export function Dimension() {
-  const { dim, vectors, setDim, addVector, removeVector, updateVector, toggleVisible } =
+  const { dim, vectors, setDim, addVector, removeVector, updateVector, toggleVisible, loadScenario } =
     useDimensionStore()
 
   const geo = deriveDimensionGeometry(vectors, dim)
@@ -122,10 +122,27 @@ export function Dimension() {
         {/* ---- Controls card ---- */}
         <div className={styles.stageControls}>
           <div className={styles.sandboxInner}>
-            {/* Space toggle */}
+            {/* Space + scenario controls */}
             <div className={styles.dimRow}>
               <span className={styles.sandboxLabel}>Space</span>
               <DimensionToggle value={dim} onChange={setDim} />
+            </div>
+            <div className={styles.dimRow}>
+              <span className={styles.sandboxLabel}>Preset</span>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  className={styles.scenarioBtn}
+                  onClick={() => loadScenario('dim2')}
+                >
+                  dim 2 in R³
+                </button>
+                <button
+                  className={styles.scenarioBtn}
+                  onClick={() => loadScenario('dim3')}
+                >
+                  dim 3 in R³
+                </button>
+              </div>
             </div>
 
             {/* Dimension readout */}
@@ -251,7 +268,7 @@ export function Dimension() {
               <ul className={styles.tryList}>
                 <li>Add a vector parallel to an existing one — dimension doesn't increase</li>
                 <li>Add a truly independent vector — watch the span grow</li>
-                <li>Try filling R² with 3 vectors — dimension stays 2</li>
+                <li>Try filling R{dim === '2d' ? '²' : '³'} with vectors — dimension is capped by the ambient dimension</li>
                 <li>Toggle visibility to see how each vector contributes</li>
               </ul>
 
@@ -280,7 +297,7 @@ export function Dimension() {
               {atMaxDim && numVectors > 0 && (
                 <Callout variant="warning">
                   Adding more vectors to a {dimension}-dimensional span in R
-                  <sup>{maxDimension}</sup> cannot increase the dimension further.
+                  <sup>{dim === '2d' ? '2' : '3'}</sup> cannot increase the dimension further.
                 </Callout>
               )}
             </div>

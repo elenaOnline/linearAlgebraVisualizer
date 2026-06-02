@@ -329,3 +329,45 @@ must read and update it as part of normal work.
 - When you finish a task: remove it from ACTIVE and append a brief entry to DONE.
 - Do not delete from DONE.md.
 - When a non-obvious decision is made (a workaround, a spec ambiguity, a choice between valid options), record it in `STATUS.md` under "Decisions log" with a date.
+
+## 13. Spec files
+
+Feature specs live in `pre-dev/spec/`. Each spec is the source of truth for *what*
+to build in a phase and how the work will be judged. Read `pre-dev/spec/README.md`
+for the full format. Key sections every spec must contain:
+
+- **§0 Preamble** — relationship to SPEC.md/CLAUDE.md, inherited constraints, new ground covered, standing conventions
+- **§1 Shared primitives** — new `scene/`/`ui/`/`linalg/` components, each with interface, implementation notes, and test requirements
+- **§2 New types** — additions to `src/types.ts`
+- **§3 Card/feature specs** — one entry per card: registry ID, panels, store spec, geometry.ts spec, geometry.test requirements, components used, acceptance criteria, goal criteria, honesty notes
+- **§4 Phase plan** — sequential/parallel grouping and parallelization table
+- **§5 Definition of Done** — objective gates (build/test/lint) + functional requirements + verifier checklist
+- **§6 BACKLOG entries** — ready-to-paste items for `dev/BACKLOG.md`
+
+Name spec files `SPEC-<kebab-case-phase>.md`. A spec in `pre-dev/spec/` is the input
+to the BACKLOG; do not modify BACKLOG items directly from the spec without also
+updating the spec if requirements change.
+
+## 14. Phase-wave execution files
+
+Parallel execution plans live in `dev/phase-waves/`. A phase-wave file takes a set of
+BACKLOG items and groups them into waves that can run in parallel. Read
+`dev/phase-waves/README.md` for the full format. Key rules:
+
+- **Wave ordering is driven by file-edit conflicts only** — not by functional dependencies. Items that touch disjoint files can run in the same wave even if one logically "follows" the other.
+- **Items sharing a file within a wave** must be assigned to the same agent, or split by non-overlapping line ranges.
+- **Every wave ends with a gate:** `npm run build && npm run test && npm run lint` must all exit 0 before the next wave starts.
+- **The final wave** ends with the gate plus the verification procedure from `dev/PROTOCOL.md`.
+
+Name phase-wave files `PHASE-<NAME>-WAVES.md`.
+
+## 15. Spec-to-execution pipeline
+
+The standard pipeline for taking a spec through to execution:
+
+1. **Read the spec** (`pre-dev/spec/`). Identify all deliverables: Phase A primitives, then per-card groups.
+2. **Create BACKLOG items** (`dev/BACKLOG.md`) using the spec's §6 entries (ready-to-paste) or drafting new ones following `dev/README.md` format.
+3. **Determine wave groupings**: for each pair of items, check if they share any file. Items with zero shared files → same wave candidate. Items sharing a file → different waves (or same-agent within a wave).
+4. **Create a phase-wave file** (`dev/phase-waves/PHASE-<NAME>-WAVES.md`) with the grouped waves, gates, quick-reference diagram, and deviation protocol.
+5. **Execute wave by wave**, launching parallel agents per wave, running the gate between waves.
+6. **Run the verification gate** (`dev/PROTOCOL.md`) after the final wave passes.

@@ -125,25 +125,29 @@ export function PolyScalarMul() {
             </div>
 
             {/* Polynomial p */}
-            <div className={styles.row}>
-              <div className={styles.section}>
-                <div className={styles.groupLabel}>p (red polynomial)</div>
-                <div className={styles.label}>a₀</div>
-                <NumberInput
-                  value={p[0]}
-                  onChange={(v) => setP([v, p[1], p[2]])}
-                  step={0.1}
-                  showIntSlider
-                />
-                <div className={styles.label}>a₁</div>
-                <NumberInput
-                  value={p[1]}
-                  onChange={(v) => setP([p[0], v, p[2]])}
-                  step={0.1}
-                  showIntSlider
-                />
+            <div>
+              <div className={styles.groupLabel}>p (red polynomial)</div>
+              <div className={styles.row}>
+                <div className={styles.section}>
+                  <div className={styles.label}>a₀</div>
+                  <NumberInput
+                    value={p[0]}
+                    onChange={(v) => setP([v, p[1], p[2]])}
+                    step={0.1}
+                    showIntSlider
+                  />
+                </div>
+                <div className={styles.section}>
+                  <div className={styles.label}>a₁</div>
+                  <NumberInput
+                    value={p[1]}
+                    onChange={(v) => setP([p[0], v, p[2]])}
+                    step={0.1}
+                    showIntSlider
+                  />
+                </div>
                 {deg === 'p2' && (
-                  <>
+                  <div className={styles.section}>
                     <div className={styles.label}>a₂</div>
                     <NumberInput
                       value={p[2]}
@@ -151,7 +155,7 @@ export function PolyScalarMul() {
                       step={0.1}
                       showIntSlider
                     />
-                  </>
+                  </div>
                 )}
               </div>
             </div>

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
-import type { Vec3, SubspaceGeometry, Dim } from '../../types'
+import type { Vec3, SubspaceGeometry, Dim, Mat2x2, Mat3x3 } from '../../types'
 import { normalize, isZero } from '../../linalg/vector'
 import { Scene } from '../../scene/Scene'
 import { VectorArrow } from '../../scene/VectorArrow'
@@ -203,6 +203,9 @@ interface SceneContentProps {
   showDetRegion: boolean
   showColumnSpace: boolean
   onDragV: (pos: Vec3) => void
+  onDragCol1: (pos: Vec3) => void
+  onDragCol2: (pos: Vec3) => void
+  onDragCol3: ((pos: Vec3) => void) | null
   dim: Dim
 }
 
@@ -212,6 +215,9 @@ function SceneContent({
   showDetRegion,
   showColumnSpace,
   onDragV,
+  onDragCol1,
+  onDragCol2,
+  onDragCol3,
   dim,
 }: SceneContentProps) {
   const { col1, col2, col3, v3, Av3, gridLines, unitShapeCorners, detA } = geo
@@ -279,6 +285,13 @@ function SceneContent({
       <VectorArrow vector={col2} color={V2} showLabel={false} />
       {col3 && <VectorArrow vector={col3} color={V3} showLabel={false} />}
 
+      {/* Draggable handles at column vector tips */}
+      <DraggableHandle position={col1} onDrag={onDragCol1} color={V1} radius={0.13} dim={dim} />
+      <DraggableHandle position={col2} onDrag={onDragCol2} color={V2} radius={0.13} dim={dim} />
+      {col3 && onDragCol3 && (
+        <DraggableHandle position={col3} onDrag={onDragCol3} color={V3} radius={0.13} dim={dim} />
+      )}
+
       {/* Probe vector v (original, faint) */}
       <VectorArrow vector={v3} color={V3} opacity={0.45} showLabel={false} />
 
@@ -327,6 +340,33 @@ export function LinearMaps() {
     setV(next)
   }
 
+  const handleDragCol1 = (pos: Vec3) => {
+    if (dim === '2d') {
+      const a = A as Mat2x2
+      setA([[pos[0], a[0][1]], [pos[1], a[1][1]]])
+    } else {
+      const a = A as Mat3x3
+      setA([[pos[0], a[0][1], a[0][2]], [pos[1], a[1][1], a[1][2]], [pos[2], a[2][1], a[2][2]]])
+    }
+  }
+
+  const handleDragCol2 = (pos: Vec3) => {
+    if (dim === '2d') {
+      const a = A as Mat2x2
+      setA([[a[0][0], pos[0]], [a[1][0], pos[1]]])
+    } else {
+      const a = A as Mat3x3
+      setA([[a[0][0], pos[0], a[0][2]], [a[1][0], pos[1], a[1][2]], [a[2][0], pos[2], a[2][2]]])
+    }
+  }
+
+  const handleDragCol3 = (pos: Vec3) => {
+    if (dim === '3d') {
+      const a = A as Mat3x3
+      setA([[a[0][0], a[0][1], pos[0]], [a[1][0], a[1][1], pos[1]], [a[2][0], a[2][1], pos[2]]])
+    }
+  }
+
   const detLabel = `det(A) = ${fmt4(detA)}`
   const absDetLabel = `|det| = ${fmt4(Math.abs(detA))}`
 
@@ -347,6 +387,9 @@ export function LinearMaps() {
                 showDetRegion={showDetRegion}
                 showColumnSpace={showColumnSpace}
                 onDragV={handleDragV}
+                onDragCol1={handleDragCol1}
+                onDragCol2={handleDragCol2}
+                onDragCol3={dim === '3d' ? handleDragCol3 : null}
                 dim={dim}
               />
             </Scene>

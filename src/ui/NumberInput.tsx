@@ -23,6 +23,7 @@ export function NumberInput({
   const id = useId()
   const [localValue, setLocalValue] = useState(String(value))
   const [focused, setFocused] = useState(false)
+  const [shiftHeld, setShiftHeld] = useState(false)
 
   // Sync external value → display when the input is not being edited.
   useEffect(() => {
@@ -30,6 +31,18 @@ export function NumberInput({
       setLocalValue(String(value))
     }
   }, [value, focused])
+
+  // Track Shift key state for slider step snapping.
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => { if (e.key === 'Shift') setShiftHeld(true) }
+    const onKeyUp = (e: KeyboardEvent) => { if (e.key === 'Shift') setShiftHeld(false) }
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('keyup', onKeyUp)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('keyup', onKeyUp)
+    }
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value
@@ -50,7 +63,8 @@ export function NumberInput({
 
   const sliderMin = -20
   const sliderMax = 20
-  const sliderValue = Math.max(sliderMin, Math.min(sliderMax, Math.round(value)))
+  const sliderValue = Math.max(sliderMin, Math.min(sliderMax, value))
+  const defaultStep = 0.1
 
   return (
     <div className={styles.wrapper}>
@@ -74,9 +88,9 @@ export function NumberInput({
           className={styles.intSlider}
           min={sliderMin}
           max={sliderMax}
-          step={1}
+          step={shiftHeld ? 1 : defaultStep}
           value={sliderValue}
-          onChange={(e) => onChange(parseInt(e.target.value, 10))}
+          onChange={(e) => onChange(parseFloat(e.target.value))}
         />
       )}
     </div>

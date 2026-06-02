@@ -82,9 +82,9 @@ export function Differentiation() {
   return (
     <div className={styles.body}>
       <div className={styles.stageCol}>
-        {/* ---- Two scenes side by side ---- */}
-        <div className={styles.splitPanels}>
-          {/* Left: P₂ domain */}
+        {/* ---- Left column: stacked scenes ---- */}
+        <div className={styles.scenesCol}>
+          {/* P₂ domain */}
           <div className={styles.panelCard}>
             <div className={styles.panelHeader}>
               Domain — P₂ coefficient space (axes: 1, x, x²)
@@ -100,7 +100,7 @@ export function Differentiation() {
             </div>
           </div>
 
-          {/* Right: P₁ codomain — read-only */}
+          {/* P₁ codomain — read-only */}
           <div className={styles.panelCard}>
             <div className={styles.panelHeader}>
               Codomain — P₁ coefficient space (axes: 1, x)
@@ -113,64 +113,67 @@ export function Differentiation() {
           </div>
         </div>
 
-        {/* ---- Controls ---- */}
-        <div className={styles.controls}>
-          <div className={styles.controlsInner}>
-            <div className={styles.row}>
-              <div className={styles.section}>
-                <div className={styles.label}>a₀ (constant term)</div>
-                <NumberInput value={a0} onChange={setA0} step={0.1} showIntSlider />
-              </div>
-              <div className={styles.section}>
-                <div className={styles.label}>a₁ (x coefficient)</div>
-                <NumberInput value={a1} onChange={setA1} step={0.1} showIntSlider />
-              </div>
-              <div className={styles.section}>
-                <div className={styles.label}>a₂ (x² coefficient)</div>
-                <NumberInput value={a2} onChange={setA2} step={0.1} showIntSlider />
-              </div>
+        {/* ---- Right column: graph + controls ---- */}
+        <div className={styles.graphCol}>
+          {/* Function graph panel */}
+          <div className={styles.graphPanel}>
+            <div className={styles.panelHeader}>
+              Graph — f(x) and f′(x) over x ∈ [−10, 10]
             </div>
-
-            <div className={styles.toggleRow}>
-              <label className={styles.toggleLabel}>
-                <input
-                  type="checkbox"
-                  checked={showKernel}
-                  onChange={(e) => setShowKernel(e.target.checked)}
-                />
-                Show kernel of D (constant polynomial axis)
-              </label>
+            <div className={styles.graphLegend}>
+              <span className={styles.legendItem}>
+                <span className={styles.legendSwatch} style={{ background: V1 }} />
+                f(x) = a₀ + a₁x + a₂x²
+              </span>
+              <span className={styles.legendItem}>
+                <span className={styles.legendSwatch} style={{ background: V2 }} />
+                f′(x) = a₁ + 2a₂x
+              </span>
             </div>
+            <div className={styles.graphCanvasWrap}>
+              <Scene dim="2d" frameloop="always">
+                <FunctionGraph fn={fFn} xMin={-10} xMax={10} color={V1} lineWidth={2} />
+                <FunctionGraph fn={dfFn} xMin={-10} xMax={10} color={V2} lineWidth={2} />
+              </Scene>
+            </div>
+          </div>
 
-            {onKernel && (
-              <Callout variant="info">
-                This polynomial is constant: its derivative is the zero polynomial.
-                Constant polynomials span the kernel of D.
-              </Callout>
-            )}
-          </div>
-        </div>
+          {/* Controls */}
+          <div className={styles.controls}>
+            <div className={styles.controlsInner}>
+              <div className={styles.row}>
+                <div className={styles.section}>
+                  <div className={styles.label}>a₀ (constant term)</div>
+                  <NumberInput value={a0} onChange={setA0} step={0.1} showIntSlider />
+                </div>
+                <div className={styles.section}>
+                  <div className={styles.label}>a₁ (x coefficient)</div>
+                  <NumberInput value={a1} onChange={setA1} step={0.1} showIntSlider />
+                </div>
+                <div className={styles.section}>
+                  <div className={styles.label}>a₂ (x² coefficient)</div>
+                  <NumberInput value={a2} onChange={setA2} step={0.1} showIntSlider />
+                </div>
+              </div>
 
-        {/* ---- Function graph panel ---- */}
-        <div className={styles.graphPanel}>
-          <div className={styles.panelHeader}>
-            Graph — f(x) and f′(x) over x ∈ [−10, 10]
-          </div>
-          <div className={styles.graphLegend}>
-            <span className={styles.legendItem}>
-              <span className={styles.legendSwatch} style={{ background: V1 }} />
-              f(x) = a₀ + a₁x + a₂x²
-            </span>
-            <span className={styles.legendItem}>
-              <span className={styles.legendSwatch} style={{ background: V2 }} />
-              f′(x) = a₁ + 2a₂x
-            </span>
-          </div>
-          <div className={styles.graphCanvasWrap}>
-            <Scene dim="2d" frameloop="always">
-              <FunctionGraph fn={fFn} xMin={-10} xMax={10} color={V1} lineWidth={2} />
-              <FunctionGraph fn={dfFn} xMin={-10} xMax={10} color={V2} lineWidth={2} />
-            </Scene>
+              <div className={styles.toggleRow}>
+                <label className={styles.toggleLabel}>
+                  <input
+                    type="checkbox"
+                    checked={showKernel}
+                    onChange={(e) => setShowKernel(e.target.checked)}
+                  />
+                  Show kernel of D (constant polynomial axis)
+                </label>
+              </div>
+
+              {onKernel && (
+                <Callout variant="info">
+                  This polynomial is constant: its derivative is the zero polynomial.
+                  Constant polynomials span the kernel of D.
+                </Callout>
+              )}
+            </div>
           </div>
         </div>
       </div>

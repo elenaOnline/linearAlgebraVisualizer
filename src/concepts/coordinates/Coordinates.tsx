@@ -20,14 +20,15 @@ function fmt(n: number): string {
 
 interface StdSceneContentProps {
   vec: Vec2
+  stdCoords: Vec2
   onDragVec: (pos: Vec3) => void
 }
 
-function StdSceneContent({ vec, onDragVec }: StdSceneContentProps) {
+function StdSceneContent({ vec, stdCoords, onDragVec }: StdSceneContentProps) {
   const vec3: Vec3 = [vec[0], vec[1], 0]
   return (
     <>
-      <VectorArrow vector={vec3} color={V1} label="v" showLabel />
+      <VectorArrow vector={vec3} color={V1} label={`v (${fmt(stdCoords[0])}, ${fmt(stdCoords[1])})`} showLabel />
       <DraggableHandle
         position={vec3}
         onDrag={onDragVec}
@@ -47,6 +48,7 @@ interface CustomSceneContentProps {
   v2: Vec2
   latticePoints: Vec3[]
   basisIsValid: boolean
+  customCoords: Vec2 | null
   onDragVec: (pos: Vec3) => void
   onDragV1: (pos: Vec3) => void
   onDragV2: (pos: Vec3) => void
@@ -58,6 +60,7 @@ function CustomSceneContent({
   v2,
   latticePoints,
   basisIsValid,
+  customCoords,
   onDragVec,
   onDragV1,
   onDragV2,
@@ -79,7 +82,16 @@ function CustomSceneContent({
       <VectorArrow vector={v13} color={V2} label="v₁" showLabel />
       <VectorArrow vector={v23} color={V3} label="v₂" showLabel />
       {/* Abstract vector — same object as in left panel */}
-      <VectorArrow vector={vec3} color={V1} label="v" showLabel />
+      <VectorArrow
+        vector={vec3}
+        color={V1}
+        label={
+          customCoords !== null
+            ? `v (${fmt(customCoords[0])}, ${fmt(customCoords[1])})`
+            : 'v'
+        }
+        showLabel
+      />
       {/* Draggable handles */}
       <DraggableHandle
         position={v13}
@@ -136,7 +148,7 @@ export function Coordinates() {
             <div className={styles.panelHeader}>Standard basis {'{'}e₁, e₂{'}'}</div>
             <div className={styles.canvasWrap}>
               <Scene dim="2d" frameloop="always">
-                <StdSceneContent vec={vec} onDragVec={handleDragVec} />
+                <StdSceneContent vec={vec} stdCoords={stdCoords} onDragVec={handleDragVec} />
               </Scene>
             </div>
             <div className={styles.coordReadout}>
@@ -157,6 +169,7 @@ export function Coordinates() {
                   v2={v2}
                   latticePoints={latticePoints}
                   basisIsValid={basisIsValid}
+                  customCoords={customCoords}
                   onDragVec={handleDragVec}
                   onDragV1={handleDragV1}
                   onDragV2={handleDragV2}

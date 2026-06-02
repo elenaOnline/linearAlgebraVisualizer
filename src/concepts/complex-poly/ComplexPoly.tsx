@@ -11,7 +11,7 @@ import { Panel } from '../../ui/Panel'
 import { MathText } from '../../ui/MathText'
 import { Callout } from '../../ui/Callout'
 import { ComplexColorKey } from '../../ui/ComplexColorKey'
-import { evalComplexPoly } from '../../linalg/complex'
+import { evalComplexPoly, complexArg, complexMag, complexPolar } from '../../linalg/complex'
 import { useComplexPolyStore } from './store'
 import { computeComplexPolyGeo } from './geometry'
 import { V1, V2, V3 } from '../../styles/colors'
@@ -32,6 +32,8 @@ interface CoeffPanelProps {
 function CoeffPanel({ label, value, color, onChange, children }: CoeffPanelProps) {
   const pos: Vec3 = [value[0], value[1], 0]
   const handleDrag = (p: Vec3) => onChange([p[0], p[1]])
+  const angle = complexArg(value)
+  const mag = complexMag(value)
 
   return (
     <div className={styles.coeffCard}>
@@ -65,6 +67,18 @@ function CoeffPanel({ label, value, color, onChange, children }: CoeffPanelProps
             onChange={(v) => onChange([value[0], v])}
             step={0.1}
             showIntSlider
+          />
+        </div>
+        <div className={styles.coeffInputGroup}>
+          <div className={styles.inputLabel}>angle ({angle.toFixed(3)} rad)</div>
+          <input
+            type="range"
+            className={styles.angleSlider}
+            min={-Math.PI}
+            max={Math.PI}
+            step={0.01}
+            value={angle}
+            onChange={(e) => onChange(complexPolar(mag, parseFloat(e.target.value)))}
           />
         </div>
       </div>

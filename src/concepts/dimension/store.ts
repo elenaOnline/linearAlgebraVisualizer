@@ -15,6 +15,7 @@ interface DimensionState {
   removeVector: (id: string) => void
   updateVector: (id: string, vec: Vec) => void
   toggleVisible: (id: string) => void
+  loadScenario: (s: 'dim2' | 'dim3') => void
 }
 
 // Default vectors for each new addition (cycle through these)
@@ -49,10 +50,11 @@ function toVecDim(v: Vec, dim: Dim): Vec {
 }
 
 export const useDimensionStore = create<DimensionState>((set) => ({
-  dim: '2d',
+  dim: '3d',
   vectors: [
-    { id: 'v1', vec: [2, 0] as Vec2, visible: true },
-    { id: 'v2', vec: [0, 2] as Vec2, visible: true },
+    { id: 'v1', vec: [2, 0, 0] as Vec3, visible: true },
+    { id: 'v2', vec: [0, 2, 0] as Vec3, visible: true },
+    { id: 'v3', vec: [2, 2, 0] as Vec3, visible: true },
   ],
 
   setDim: (d) =>
@@ -95,6 +97,22 @@ export const useDimensionStore = create<DimensionState>((set) => ({
         e.id === id ? { ...e, visible: !e.visible } : e,
       ),
     })),
+
+  loadScenario: (s) =>
+    set({
+      dim: '3d',
+      vectors: s === 'dim2'
+        ? [
+            { id: 'v1', vec: [2, 0, 0] as Vec3, visible: true },
+            { id: 'v2', vec: [0, 2, 0] as Vec3, visible: true },
+            { id: 'v3', vec: [2, 2, 0] as Vec3, visible: true },
+          ]
+        : [
+            { id: 'v1', vec: [2, 0, 0] as Vec3, visible: true },
+            { id: 'v2', vec: [0, 2, 0] as Vec3, visible: true },
+            { id: 'v3', vec: [0, 0, 2] as Vec3, visible: true },
+          ],
+    }),
 }))
 
 // Exported helper so Dimension.tsx can read the store

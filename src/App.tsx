@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Home } from './routes/Home'
 import { ConceptPage } from './routes/ConceptPage'
+import { FeedbackTool } from './feedback/FeedbackTool'
 import styles from './App.module.css'
 
 export function App() {
@@ -11,6 +12,7 @@ export function App() {
           <Route path="/" element={<Home />} />
           <Route path="/concept/:id" element={<ConceptPage />} />
         </Routes>
+        {import.meta.env.DEV && <FeedbackTool />}
       </div>
     </BrowserRouter>
   )

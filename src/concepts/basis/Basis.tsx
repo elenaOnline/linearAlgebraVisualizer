@@ -31,6 +31,7 @@ interface SceneContentProps {
   latticePoints: Vec3[]
   isBasis: boolean
   dim: import('../../types').Dim
+  coordsBasis: number[] | null
   onDragB1: (pos: Vec3) => void
   onDragB2: (pos: Vec3) => void
   onDragB3: (pos: Vec3) => void
@@ -45,6 +46,7 @@ function SceneContent({
   latticePoints,
   isBasis,
   dim,
+  coordsBasis,
   onDragB1,
   onDragB2,
   onDragB3,
@@ -61,7 +63,9 @@ function SceneContent({
     },
     {
       position: [p3[0] + 0.2, p3[1] + 0.2, p3[2] + 0.2],
-      text: 'p',
+      text: coordsBasis
+        ? `p [${coordsBasis.map((c) => c.toFixed(2)).join(', ')}]_B`
+        : 'p',
     },
   ]
 
@@ -163,7 +167,7 @@ export function Basis() {
             <span className={styles.grow} />
           </div>
           <div className={styles.canvas}>
-            <Scene dim={dim} frameloop="always">
+            <Scene dim={dim} frameloop="always" showGrid={false}>
               <SceneContent
                 b1_3={b1_3}
                 b2_3={b2_3}
@@ -172,6 +176,7 @@ export function Basis() {
                 latticePoints={latticePoints}
                 isBasis={isBasis}
                 dim={dim}
+                coordsBasis={coordsBasis}
                 onDragB1={handleDragB1}
                 onDragB2={handleDragB2}
                 onDragB3={handleDragB3}
