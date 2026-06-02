@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from 'react'
 import { Scene } from '../../scene/Scene'
 import { SubspaceMesh } from '../../scene/SubspaceMesh'
 import { VectorArrow } from '../../scene/VectorArrow'
+import { VP } from '../../styles/colors'
 import styles from '../thumbnail.module.css'
 
 // A = [[1,2],[2,4]] — rank 1, nullspace = span([-2,1])
@@ -12,19 +14,40 @@ const NULL_DIR: [number, number, number] = [
 ]
 
 export function NullspaceThumbnail() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setMounted(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '100px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <div className={styles.thumbnail}>
-      <Scene dim="2d" frameloop="demand">
-        {/* Nullspace line in red */}
-        <SubspaceMesh
-          geometry={{ kind: 'line', directions: [NULL_DIR] }}
-          color="#e74c3c"
-          opacity={0.8}
-          dim="2d"
-        />
-        {/* A null vector example: [-2,1] → Ax = 0 */}
-        <VectorArrow vector={[-2, 1, 0]} color="#e74c3c" opacity={0.9} />
-      </Scene>
+    <div ref={containerRef} className={styles.thumbnail}>
+      {mounted && (
+        <Scene dim="2d" frameloop="demand">
+          {/* Nullspace line — forest (vp, derived subspace) */}
+          <SubspaceMesh
+            geometry={{ kind: 'line', directions: [NULL_DIR] }}
+            color={VP}
+            opacity={0.7}
+            dim="2d"
+          />
+          {/* A null vector example: [-2,1] → Ax = 0 */}
+          <VectorArrow vector={[-2, 1, 0]} color={VP} opacity={0.9} />
+        </Scene>
+      )}
     </div>
   )
 }

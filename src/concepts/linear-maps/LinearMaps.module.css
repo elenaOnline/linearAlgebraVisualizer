@@ -1,18 +1,73 @@
-/* Three-region layout for the Linear Maps concept page */
-.layout {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  gap: 0;
-}
-
-/* Top: visualization */
-.vizRegion {
+/* Two-column grid layout for the Linear Maps concept page */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+  padding: 18px 24px 22px;
+  overflow-y: auto;
   flex: 1 1 0;
   min-height: 0;
-  position: relative;
+}
+
+@media (max-width: 960px) {
+  .body { grid-template-columns: 1fr; }
+}
+
+.stageCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+.stageViz {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 300px;
+}
+
+.vh {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+  font-family: var(--font-math);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-2);
+  flex-shrink: 0;
+}
+
+.grow { flex: 1; }
+
+.canvas {
+  background: var(--panel);
+  padding: 10px;
+  min-height: 240px;
+  flex: 1;
+  position: relative;
+}
+
+.stageControls {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.rail {
+  min-width: 0;
 }
 
 /* Det readout overlay */
@@ -20,13 +75,13 @@
   position: absolute;
   top: var(--space-3);
   right: var(--space-3);
-  background: rgba(22, 33, 62, 0.88);
-  border: 1px solid rgba(233, 69, 96, 0.35);
-  border-radius: var(--radius-md);
+  background: rgba(242, 241, 239, 0.88);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
   padding: var(--space-2) var(--space-3);
   font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  font-size: 12px;
+  color: var(--ink-3);
   z-index: 10;
   pointer-events: none;
   line-height: 1.7;
@@ -34,50 +89,26 @@
 }
 
 .detValue {
-  font-size: var(--font-size-base);
+  font-size: 14px;
   font-weight: 700;
-  color: var(--color-text);
+  color: var(--ink);
 }
 
 .singularBadge {
   display: inline-block;
   margin-left: var(--space-2);
   padding: 1px 6px;
-  border-radius: var(--radius-sm);
-  background: rgba(233, 69, 96, 0.2);
-  border: 1px solid rgba(233, 69, 96, 0.5);
-  color: var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--v1-wash);
+  border: 1px solid var(--v1-edge);
+  color: var(--v1);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   vertical-align: middle;
 }
 
-/* Bottom row: sandbox + explanation side by side */
-.bottomRow {
-  display: flex;
-  flex-direction: row;
-  flex-shrink: 0;
-  height: 300px;
-  overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.sandboxRegion {
-  flex: 1 1 0;
-  min-width: 0;
-  overflow-y: auto;
-  padding: var(--space-3) var(--space-4);
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.explanationRegion {
-  flex: 1 1 0;
-  min-width: 0;
-  overflow-y: auto;
-  padding: var(--space-3) var(--space-4);
-}
 
 /* ---- Sandbox controls ---- */
 .sandboxInner {
@@ -102,11 +133,11 @@
 }
 
 .sandboxLabel {
-  font-size: var(--font-size-sm);
+  font-size: 11px;
   font-family: var(--font-mono);
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .dimRow {
@@ -127,14 +158,14 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  font-size: 12px;
+  color: var(--ink-3);
   cursor: pointer;
   user-select: none;
 }
 
 .toggleLabel input[type='checkbox'] {
-  accent-color: var(--color-accent);
+  accent-color: var(--ink);
   width: 14px;
   height: 14px;
   cursor: pointer;
@@ -145,8 +176,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  font-size: 13px;
+  font-family: var(--font-math);
+  color: var(--ink-2);
   line-height: 1.6;
 }
 
@@ -169,6 +201,6 @@
 
 .tryList li::before {
   content: '→ ';
-  color: var(--color-accent);
+  color: var(--ink-3);
   font-family: var(--font-mono);
 }

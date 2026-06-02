@@ -1,7 +1,8 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Scene } from '../../scene/Scene'
 import { VectorArrow } from '../../scene/VectorArrow'
+import { V1, V2 } from '../../styles/colors'
 import styles from '../thumbnail.module.css'
 
 // Thumbnail: show a non-standard basis with its induced lattice
@@ -54,19 +55,40 @@ function ThumbnailLattice() {
 
   return (
     <lineSegments geometry={geometry}>
-      <lineBasicMaterial color="#f39c12" opacity={0.5} transparent />
+      <lineBasicMaterial color={V1} opacity={0.30} transparent />
     </lineSegments>
   )
 }
 
 export function BasisThumbnail() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setMounted(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '100px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <div className={styles.thumbnail}>
-      <Scene dim="2d" frameloop="demand">
-        <ThumbnailLattice />
-        <VectorArrow vector={B1} color="#f39c12" label="b₁" showLabel={false} />
-        <VectorArrow vector={B2} color="#e94560" label="b₂" showLabel={false} />
-      </Scene>
+    <div ref={containerRef} className={styles.thumbnail}>
+      {mounted && (
+        <Scene dim="2d" frameloop="demand">
+          <ThumbnailLattice />
+          <VectorArrow vector={B1} color={V1} label="b₁" showLabel={false} />
+          <VectorArrow vector={B2} color={V2} label="b₂" showLabel={false} />
+        </Scene>
+      )}
     </div>
   )
 }

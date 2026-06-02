@@ -19,6 +19,7 @@ export interface ConceptMeta {
   supports: ('2d' | '3d')[]
   Component: ComponentType
   Thumbnail: ComponentType
+  disabled?: boolean
 }
 
 export type SubspaceKind = 'point' | 'line' | 'plane' | 'space'
@@ -28,3 +29,12 @@ export interface SubspaceGeometry {
   /** For 'line': one direction vector; for 'plane': two direction vectors (basis) */
   directions?: Vec3[]
 }
+
+/** [real, imaginary] */
+export type Complex = [number, number]
+
+/** P₁ (degree ≤ 1, 2D coefficient space) or P₂ (degree ≤ 2, 3D) */
+export type PolyDeg = 'p1' | 'p2'
+
+/** A vector in ℂ² — a pair of complex numbers */
+export type ComplexVec2 = [Complex, Complex]

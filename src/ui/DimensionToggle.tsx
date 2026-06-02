@@ -8,7 +8,7 @@ interface DimensionToggleProps {
 
 export function DimensionToggle({ value, onChange }: DimensionToggleProps) {
   return (
-    <div className={styles.toggle}>
+    <div className={styles.toggle} role="group" aria-label="Dimension">
       <button
         className={`${styles.btn} ${value === '2d' ? styles.active : ''}`}
         onClick={() => onChange('2d')}

@@ -78,7 +78,7 @@ export function PolySpace() {
             </div>
             <div className={styles.canvasWrap}>
               <Scene dim="2d" axisLabels={['x', 'f(x)']} frameloop="always">
-                <FunctionGraph fn={fnGraph} xMin={-4} xMax={4} color={V1} />
+                <FunctionGraph fn={fnGraph} xMin={-10} xMax={10} color={V1} />
               </Scene>
             </div>
           </div>

@@ -14,17 +14,18 @@ import type { Dim, Vec, Vec3 } from '../../types'
 import { useVectorSpacesStore } from './store'
 import type { CandidateType } from './store'
 import { deriveVectorSpacesGeometry } from './geometry'
+import { CANDIDATE, VEC_A, VEC_B, VEC_SUM, VEC_SCALAR, OFFSET } from '../../styles/colors'
 import styles from './VectorSpaces.module.css'
 
 // ---------------------------------------------------------------------------
 // Colour palette for the visualization
 // ---------------------------------------------------------------------------
-const COLOR_CANDIDATE = '#1abc9c'   // teal — the candidate subspace
-const COLOR_A         = '#e67e22'   // orange — vector a
-const COLOR_B         = '#9b59b6'   // purple — vector b
-const COLOR_SUM       = '#3498db'   // blue — a+b
-const COLOR_SCALAR    = '#f1c40f'   // yellow — c*a
-const COLOR_OFFSET    = '#e94560'   // red — offset point marker
+const COLOR_CANDIDATE = CANDIDATE   // teal — the candidate subspace
+const COLOR_A         = VEC_A       // orange — vector a
+const COLOR_B         = VEC_B       // purple — vector b
+const COLOR_SUM       = VEC_SUM     // blue — a+b
+const COLOR_SCALAR    = VEC_SCALAR  // yellow — c*a
+const COLOR_OFFSET    = OFFSET      // red — offset point marker
 
 // ---------------------------------------------------------------------------
 // Candidate type metadata
@@ -102,48 +103,15 @@ export function VectorSpaces() {
 
   // ---- Render ----
   return (
-    <div className={styles.root}>
-
-      {/* ---- Top toolbar ---- */}
-      <div className={styles.toolbar}>
-        <DimensionToggle value={dim} onChange={(d: Dim) => setDim(d)} />
-
-        <span className={styles.toolbarLabel}>Candidate subset:</span>
-
-        <div className={styles.radioGroup}>
-          {CANDIDATE_OPTIONS.map((opt) => {
-            const disabled = !!opt.requires3D && dim === '2d'
-            const checked  = candidateType === opt.value
-            return (
-              <label
-                key={opt.value}
-                className={[
-                  styles.radioLabel,
-                  checked ? styles.radioLabelChecked : '',
-                  disabled ? styles.radioLabelDisabled : '',
-                ].join(' ')}
-              >
-                <input
-                  type="radio"
-                  className={styles.radioInput}
-                  name="candidateType"
-                  value={opt.value}
-                  checked={checked}
-                  disabled={disabled}
-                  onChange={() => !disabled && setCandidateType(opt.value)}
-                />
-                {opt.label}
-              </label>
-            )
-          })}
-        </div>
-      </div>
-
-      {/* ---- Body (scene + sidebar) ---- */}
-      <div className={styles.body}>
-
-        {/* ---- 3-D / 2-D Scene ---- */}
-        <div className={styles.sceneColumn}>
+    <div className={styles.body}>
+      <div className={styles.stageCol}>
+        {/* ---- Visualization card ---- */}
+        <div className={styles.stageViz}>
+          <div className={styles.vh}>
+            <em>V</em> ⊆ ℝ<sup><em>n</em></sup>, closed under + and ·
+            <span className={styles.grow} />
+          </div>
+          <div className={styles.canvas}>
           <Scene dim={dim} frameloop="always">
 
             {/* The candidate subspace (drawn through origin for non-examples too,
@@ -192,13 +160,84 @@ export function VectorSpaces() {
               Offset = {offset.toFixed(2)} — NOT a subspace
             </div>
           )}
+          </div>
         </div>
 
-        {/* ---- Right sidebar ---- */}
-        <div className={styles.sidebar}>
+        {/* ---- Controls card ---- */}
+        <div className={styles.stageControls}>
+          {/* Dimension toggle + candidate selector */}
+          <div className={styles.toolbar}>
+            <DimensionToggle value={dim} onChange={(d: Dim) => setDim(d)} />
+            <span className={styles.toolbarLabel}>Candidate subset:</span>
+            <div className={styles.radioGroup}>
+              {CANDIDATE_OPTIONS.map((opt) => {
+                const disabled = !!opt.requires3D && dim === '2d'
+                const checked  = candidateType === opt.value
+                return (
+                  <label
+                    key={opt.value}
+                    className={[
+                      styles.radioLabel,
+                      checked ? styles.radioLabelChecked : '',
+                      disabled ? styles.radioLabelDisabled : '',
+                    ].join(' ')}
+                  >
+                    <input
+                      type="radio"
+                      className={styles.radioInput}
+                      name="candidateType"
+                      value={opt.value}
+                      checked={checked}
+                      disabled={disabled}
+                      onChange={() => !disabled && setCandidateType(opt.value)}
+                    />
+                    {opt.label}
+                  </label>
+                )
+              })}
+            </div>
+          </div>
 
+          {/* Field inputs */}
+          <div className={styles.fieldGroup}>
+            {(candidateType === 'line' || candidateType === 'offset-line') && (
+              <div>
+                <div className={styles.fieldLabel}>Direction vector</div>
+                <VectorInput value={lineDir} onChange={(v: Vec) => setLineDir(v)} dim={dim} />
+              </div>
+            )}
+            {(candidateType === 'plane' || candidateType === 'offset-plane') && (
+              <>
+                <div>
+                  <div className={styles.fieldLabel}>Direction 1</div>
+                  <VectorInput value={planeDir1} onChange={(v: Vec) => setPlaneDir1(v)} dim={dim} />
+                </div>
+                <div>
+                  <div className={styles.fieldLabel}>Direction 2</div>
+                  <VectorInput value={planeDir2} onChange={(v: Vec) => setPlaneDir2(v)} dim={dim} />
+                </div>
+              </>
+            )}
+            {(candidateType === 'offset-line' || candidateType === 'offset-plane') && (
+              <Slider value={offset} onChange={setOffset} min={0} max={3} step={0.05} label="Offset from origin" />
+            )}
+            <div>
+              <div className={styles.fieldLabel} style={{ color: COLOR_A }}>Test vector a</div>
+              <VectorInput value={a} onChange={(v: Vec) => setA(v)} dim={dim} />
+            </div>
+            <div>
+              <div className={styles.fieldLabel} style={{ color: COLOR_B }}>Test vector b</div>
+              <VectorInput value={b} onChange={(v: Vec) => setB(v)} dim={dim} />
+            </div>
+            <Slider value={c} onChange={setC} min={-4} max={4} step={0.1} label="Scalar c" />
+          </div>
+        </div>
+      </div>
+
+      {/* ---- Definition rail ---- */}
+      <aside className={styles.rail}>
           {/* Conditions panel */}
-          <Panel title="Subspace conditions">
+          <Panel eyebrow="Conditions" title="Subspace conditions">
             <div className={styles.conditionsList}>
               <div className={styles.conditionRow}>
                 <ConditionIcon pass={conditions.containsZero} />
@@ -235,68 +274,8 @@ export function VectorSpaces() {
                   : 'This is NOT a subspace — c·a leaves the subset.'}
           </Callout>
 
-          {/* Sandbox */}
-          <Panel title="Sandbox">
-            <div className={styles.fieldGroup}>
-
-              {/* Defining direction(s) — only for line / offset-line */}
-              {(candidateType === 'line' || candidateType === 'offset-line') && (
-                <div>
-                  <div className={styles.fieldLabel}>Direction vector</div>
-                  <VectorInput value={lineDir} onChange={(v: Vec) => setLineDir(v)} dim={dim} />
-                </div>
-              )}
-
-              {/* Defining directions — only for plane / offset-plane */}
-              {(candidateType === 'plane' || candidateType === 'offset-plane') && (
-                <>
-                  <div>
-                    <div className={styles.fieldLabel}>Direction 1</div>
-                    <VectorInput value={planeDir1} onChange={(v: Vec) => setPlaneDir1(v)} dim={dim} />
-                  </div>
-                  <div>
-                    <div className={styles.fieldLabel}>Direction 2</div>
-                    <VectorInput value={planeDir2} onChange={(v: Vec) => setPlaneDir2(v)} dim={dim} />
-                  </div>
-                </>
-              )}
-
-              {/* Offset — only for non-examples */}
-              {(candidateType === 'offset-line' || candidateType === 'offset-plane') && (
-                <Slider
-                  value={offset}
-                  onChange={setOffset}
-                  min={0}
-                  max={3}
-                  step={0.05}
-                  label="Offset from origin"
-                />
-              )}
-
-              {/* Test vectors */}
-              <div>
-                <div className={styles.fieldLabel} style={{ color: COLOR_A }}>Test vector a</div>
-                <VectorInput value={a} onChange={(v: Vec) => setA(v)} dim={dim} />
-              </div>
-
-              <div>
-                <div className={styles.fieldLabel} style={{ color: COLOR_B }}>Test vector b</div>
-                <VectorInput value={b} onChange={(v: Vec) => setB(v)} dim={dim} />
-              </div>
-
-              <Slider
-                value={c}
-                onChange={setC}
-                min={-4}
-                max={4}
-                step={0.1}
-                label="Scalar c"
-              />
-            </div>
-          </Panel>
-
           {/* Explanation */}
-          <Panel title="Explanation">
+          <Panel eyebrow="Definition" title="Vector spaces &amp; subspaces">
             <div className={styles.explanationSection}>
 
               <p className={styles.explanationText}>
@@ -325,29 +304,26 @@ export function VectorSpaces() {
                 P<sub>n</sub> and function spaces — this page only visualises subspaces of R² and R³.
               </p>
 
-              <Panel title="Try this">
-                <ul className={styles.tryThisList}>
-                  <li className={styles.tryThisItem}>
-                    Select <em>Offset line</em> and watch it fail the "contains 0" test.
-                  </li>
-                  <li className={styles.tryThisItem}>
-                    On a line through the origin, move <strong>a</strong> off the line — watch
-                    c·a turn red.
-                  </li>
-                  <li className={styles.tryThisItem}>
-                    Try a plane through the origin in 3D with vectors inside vs outside the plane.
-                  </li>
-                  <li className={styles.tryThisItem}>
-                    Set both test vectors to <strong>0</strong> — which candidates pass all three
-                    conditions trivially?
-                  </li>
-                </ul>
-              </Panel>
+              <ul className={styles.tryThisList}>
+                <li className={styles.tryThisItem}>
+                  Select <em>Offset line</em> and watch it fail the "contains 0" test.
+                </li>
+                <li className={styles.tryThisItem}>
+                  On a line through the origin, move <strong>a</strong> off the line — watch
+                  c·a turn red.
+                </li>
+                <li className={styles.tryThisItem}>
+                  Try a plane through the origin in 3D with vectors inside vs outside the plane.
+                </li>
+                <li className={styles.tryThisItem}>
+                  Set both test vectors to <strong>0</strong> — which candidates pass all three
+                  conditions trivially?
+                </li>
+              </ul>
             </div>
           </Panel>
 
-        </div>
-      </div>
+      </aside>
     </div>
   )
 }

@@ -1,44 +1,103 @@
-# Phase 1 Status
+# Project Status
 
-## Gate results
+Running journal for the Linear Algebra Visualizer. Agents append to the
+"Decisions log" when making a non-obvious choice and update "Blockers" when
+blocked. Gate results are recorded after each phase.
 
-| Command | Status |
-|---------|--------|
-| `npm run build` | PASS (tsc + vite build, exit 0) |
-| `npm run test` | PASS (115 tests across 3 test files, exit 0) |
-| `npm run lint` | PASS (0 warnings, 0 errors, exit 0) |
+---
 
-## Decisions made
+## Current snapshot
 
-### linalg/index.ts — name collision resolution
-Both `vector.ts` and `matrix.ts` export a function named `lerp`, and both `vector.ts` and `subspace.ts` export a constant named `EPS`. The barrel `index.ts` resolves this by re-exporting matrix's `lerp` as `matLerp` and subspace's `EPS` as `SUBSPACE_EPS`. The primary `lerp` (vector) and `EPS` (vector) are exported directly. Phase 2 concept agents should import math directly from their specific submodule paths (`../../linalg/vector`, etc.) to avoid ambiguity, or use the named re-exports from `../../linalg/index`.
+**Phase 3 (integration & polish) is in progress.**
 
-### CSS module declarations
-Added `src/declarations.d.ts` with a wildcard `*.module.css` declaration so TypeScript recognises CSS Module imports throughout the project. This is the standard pattern for Vite + TypeScript projects.
+| Phase | Status | Gate results |
+|-------|--------|-------------|
+| Phase 1 — Foundation | Complete | build ✅ test ✅ (115 tests) lint ✅ |
+| Phase 2 — Seven concepts | Complete | build ✅ test ✅ lint ✅ |
+| Phase 3 — Polish | In progress | — |
+| Phase 4 — Verification gate | Not started | — |
 
-### VectorArrow — Three.js material typing
-`ArrowHelper.line.material` is typed as `Material | Material[]` in Three.js typedefs. Applied a helper function `setMaterialProps` that narrows to `LineBasicMaterial | MeshBasicMaterial` before setting `opacity`/`transparent`. This preserves strict TypeScript compliance without casting to `any`.
+For pending and in-flight tasks, see `dev/BACKLOG.md` and `dev/ACTIVE.md`.
 
-### DraggableHandle — R3F pointer event typing
-Used `ThreeEvent<PointerEvent>` (from `@react-three/fiber`) as the event type for Three.js mesh pointer handlers. `ThreeEvent` correctly wraps the native `PointerEvent` and adds Three.js-specific fields like `pointerId` and `stopPropagation`.
+---
 
-### linalg/index.ts barrel — intentional selective re-export
-Only `matMat`, `matVec`, `det2`, `det3`, `transpose`, `identity`, and `matLerp` are re-exported from `matrix.ts` to avoid the `lerp` collision. All other matrix functions are still accessible directly.
+## Decisions log
 
-### SubspaceMesh 'space' kind
-For `kind === 'space'` (all of R³), renders a large transparent box using `BackSide` rendering. This gives a visual indication of the full ambient space without obstructing the interior. A note for Phase 2: concept pages should prefer not to use `kind === 'space'` in 3D where the effect is subtle; prefer narrative text in the explanation panel instead.
+Each entry: **date · topic · decision · rationale**.
 
-### Thumbnail WebGL contexts
-All 7 thumbnails use `frameloop="demand"` on their `Scene` to minimise GPU usage in the gallery. Gallery performance may still degrade with many simultaneous canvases; Phase 3 should add IntersectionObserver-based lazy mounting.
+### 2026-05-23 · linalg barrel name collisions
 
-### EPS value
-Set to `1e-9` per spec. This is well above machine epsilon (~2.2e-16) and well below typical user-facing coordinate values. The single constant is exported from `src/linalg/vector.ts` as the canonical `EPS`, and re-exported (as `SUBSPACE_EPS`) from `src/linalg/subspace.ts` where it is also used internally.
+Both `vector.ts` and `matrix.ts` export `lerp`; both `vector.ts` and
+`subspace.ts` export `EPS`. Resolved in `linalg/index.ts` by re-exporting
+matrix's `lerp` as `matLerp` and subspace's `EPS` as `SUBSPACE_EPS`. Primary
+`lerp` (vector) and `EPS` (vector) export directly. Phase 2+ agents should import
+from specific submodule paths to avoid ambiguity, or use the named re-exports.
 
-## What is NOT done in Phase 1 (by design)
+### 2026-05-23 · CSS module declarations
 
-- The 7 concept modules show placeholder components. Full implementations are Phase 2.
-- Live thumbnails exist (each renders a Three.js canvas scene) but are simplified static scenes, not interactive.
-- No Zustand stores created yet — those belong to individual concept modules.
-- No geometry.ts per concept — those are Phase 2 deliverables.
-- No cross-concept consistency pass — Phase 3.
-- Chunk size warning from Vite is expected (three.js + katex + r3f are large); Phase 3 can split chunks.
+Added `src/declarations.d.ts` with a wildcard `*.module.css` declaration so
+TypeScript recognises CSS Module imports. Standard pattern for Vite + TypeScript.
+
+### 2026-05-23 · VectorArrow Three.js material typing
+
+`ArrowHelper.line.material` is typed as `Material | Material[]`. Applied a helper
+`setMaterialProps` that narrows to `LineBasicMaterial | MeshBasicMaterial` before
+setting `opacity`/`transparent`. Preserves strict TypeScript without casting to
+`any`.
+
+### 2026-05-23 · DraggableHandle R3F pointer event typing
+
+Used `ThreeEvent<PointerEvent>` (from `@react-three/fiber`) for Three.js mesh
+pointer handlers. `ThreeEvent` wraps the native event and adds Three.js-specific
+fields like `pointerId` and `stopPropagation`.
+
+### 2026-05-23 · linalg barrel selective re-export
+
+Only `matMat`, `matVec`, `det2`, `det3`, `transpose`, `identity`, and `matLerp`
+are re-exported from `matrix.ts` to avoid the `lerp` collision. All matrix
+functions are still accessible via direct submodule import.
+
+### 2026-05-23 · SubspaceMesh 'space' kind rendering
+
+For `kind === 'space'` (all of R³): two meshes — a translucent `DoubleSide`
+`boxGeometry` (opacity 0.07) plus an `EdgesGeometry` wireframe outline. This
+replaced the earlier `BackSide`-only approach, which was nearly invisible at low
+opacity. The wireframe makes clear this is a viewport clip, not the actual
+boundary of R³.
+
+### 2026-05-23 · EPS value
+
+Set to `1e-9`. Well above machine epsilon (~2.2e-16) and well below typical
+user-facing coordinate values. Canonical `EPS` exported from `src/linalg/vector.ts`,
+re-exported as `SUBSPACE_EPS` from `src/linalg/subspace.ts`.
+
+### 2026-05-23 · Thumbnail WebGL frame loop
+
+All 7 thumbnails use `frameloop="demand"` on their `Scene` to minimise GPU usage
+in the gallery. Gallery performance may still degrade with many simultaneous
+canvases; `dev/BACKLOG.md` item B-03 tracks adding IntersectionObserver-based
+lazy mounting in Phase 3.
+
+### 2026-05-23 · Drag vs orbit conflict (R3)
+
+`OrbitControls` adds native DOM listeners to `gl.domElement`; `DraggableHandle`
+uses `setPointerCapture`. `e.stopPropagation()` only stops R3F's synthetic event
+system. Fixed by adding `DragContext` — a React context with `{ isDragging,
+setDragging }` — and passing `enabled={!isDragging}` to OrbitControls.
+
+### 2026-05-23 · NumberInput controlled-input fix
+
+Fully controlled `value={value}` caused the input to reset when the user deleted
+the last digit (`""` → `NaN` → no onChange → rerender). Fixed with local string
+state: maintain `localValue: string` and `focused: boolean`; sync from prop only
+when not focused; call `onChange(0)` for empty string, hold off on partial strings
+(`"-"`, `"1."`), snap back on blur.
+
+---
+
+## Blockers
+
+_None currently._
+
+When a blocker is recorded, format: **date · description · what would unblock it**.
+Clear the entry when resolved (note the resolution inline rather than deleting).

@@ -7,16 +7,18 @@ import { Labels } from '../../scene/Labels'
 import { VectorInput } from '../../ui/VectorInput'
 import { Slider } from '../../ui/Slider'
 import { DimensionToggle } from '../../ui/DimensionToggle'
+import { Panel } from '../../ui/Panel'
 import { MathText } from '../../ui/MathText'
 import { Callout } from '../../ui/Callout'
 import { toVec3 } from '../../linalg/vector'
 import { useSpanStore } from './store'
 import { deriveSpanGeometry } from './geometry'
 import type { Vec, Vec3 } from '../../types'
+import { V1, V2, V3, VP } from '../../styles/colors'
 import styles from './Span.module.css'
 
-const SPAN_COLOR = '#1abc9c'
-const V_COLORS = ['#e67e22', '#9b59b6', '#3498db']
+const SPAN_COLOR = VP
+const V_COLORS = [V1, V2, V3]
 const V_LABELS = ['v₁', 'v₂', 'v₃']
 
 const DIMENSION_NAMES: Record<number, string> = {
@@ -84,9 +86,15 @@ export function Span() {
   const dimensionName = DIMENSION_NAMES[geo.dimension] ?? `${geo.dimension}-dimensional subspace`
 
   return (
-    <div className={styles.layout}>
-      {/* ── Visualization region ── */}
-      <div className={styles.vizRegion}>
+    <div className={styles.body}>
+      <div className={styles.stageCol}>
+        {/* ── Visualization card ── */}
+        <div className={styles.stageViz}>
+          <div className={styles.vh}>
+            span&#123;<em>v</em><sub>1</sub>, …, <em>v</em><sub><em>k</em></sub>&#125; ⊆ ℝ<sup><em>n</em></sup>
+            <span className={styles.grow} />
+          </div>
+          <div className={styles.canvas}>
         <Scene dim={dim}>
           {/* Span subspace mesh */}
           <SubspaceMesh
@@ -142,7 +150,7 @@ export function Span() {
           <DraggableHandle
             position={probe3}
             onDrag={handleDragProbe}
-            color={geo.isProbeInSpan ? '#2ecc71' : '#e74c3c'}
+            color={geo.isProbeInSpan ? VP : V1}
             radius={0.18}
             dim={dim}
           />
@@ -174,12 +182,11 @@ export function Span() {
           </div>
           <div>{dimensionName}</div>
         </div>
-      </div>
+          </div>
+        </div>
 
-      {/* ── Bottom row ── */}
-      <div className={styles.bottomRow}>
-        {/* Sandbox */}
-        <div className={styles.sandboxRegion}>
+        {/* ── Controls card ── */}
+        <div className={styles.stageControls}>
           <div className={styles.sandboxInner}>
             {/* Dimension toggle */}
             <div className={styles.dimRow}>
@@ -258,11 +265,12 @@ export function Span() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Explanation */}
-        <div className={styles.explanationRegion}>
+      {/* ── Definition rail ── */}
+      <aside className={styles.rail}>
+        <Panel eyebrow="Definition" title="Span">
           <div className={styles.explainInner}>
-            <h4>Span</h4>
             <p>
               The span of a set of vectors is every linear combination you can make from
               them — all possible scalings and additions. It is the smallest subspace
@@ -293,8 +301,8 @@ export function Span() {
               .
             </Callout>
           </div>
-        </div>
-      </div>
+        </Panel>
+      </aside>
     </div>
   )
 }

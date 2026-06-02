@@ -13,6 +13,28 @@ Format per entry:
 
 ---
 
+## 2026-06-01 · Phase D Verification Gate — PASS
+**Summary:** Independent verifier confirmed all 11 Phase D problem-log fixes (B-15 through B-25) satisfied: 334 tests pass, all goal criteria met, build/test/lint all exit 0.
+**Gates:** build ✅ · test ✅ (334) · lint ✅
+**Commit:** (pending — uncommitted)
+**Notes:** All items verified: arg→angle replacement scoped correctly to non-TeX text; render distances extended; ComplexColorKey visual component with hue/brightness strips; ShadedArea replaces stacking indicators; VectorArrow in coefficient panels; combined view uses arrow; axis labels on ComplexPoly center panel; Differentiation graph panel; Isomorphism upgraded to R³≅P₂; combined view sizing fixed; complex-addition tile greyed out.
+
+## 2026-06-01 · [B-21, B-19, B-17] Wave 3 — ComplexPoly polish + ComplexColorKey
+**Summary:** B-21: added Re/Im/|p(z)| axis labels to ComplexPoly center panel; B-19: added VectorArrow from origin in each coefficient Argand mini-panel; B-17: created ComplexColorKey visual component (hue + brightness strips) and replaced plain-text legends in all 4 complex-space cards.
+**Gates:** build ✅ · test ✅ (334) · lint ✅
+**Commit:** (pending — uncommitted)
+
+## 2026-06-01 · [B-15, B-16, B-20, B-23] Wave 2 — Phase D problem-log fixes
+**Summary:** B-15: replaced "arg" with "angle" in all non-TeX UI labels; B-16: extended poly/complex render distance to ±10 (poly) and ±3.5 (complex-poly); B-20: replaced circleGeometry with VectorArrow in ComplexVectors combined view; B-23: upgraded Isomorphism to R³≅P₂ mapping with 3D panels, c coefficient, and quadratic graph.
+**Gates:** build ✅ · test ✅ (334) · lint ✅
+**Commit:** (pending — uncommitted)
+
+## 2026-06-01 · [B-18, B-22, B-24, B-25] Wave 1 — Phase D problem-log fixes
+**Summary:** B-18: replaced stacking indicators with ShadedArea in poly-addition and poly-scalar-mul; B-22: added f/f′ functional graph panel to Differentiation; B-24: fixed combined-view sizing in ComplexVectors; B-25: greyed out complex-addition gallery tile with disabled flag.
+**Gates:** build ✅ · test ✅ (330) · lint ✅
+**Commit:** (pending — uncommitted)
+**Notes:** B-16 render-distance extension also applied in this wave (X_MIN/X_MAX -4→-10 in poly-space, poly-addition, poly-scalar-mul; ComplexPoly BOUNDS -2→-3.5); all Wave 1 items passed independent per-item evaluators.
+
 ## 2026-06-01 · [B-14] Verification gate — PASS (abstract spaces)
 **Summary:** Fresh independent verifier confirmed all 14 SPEC-abstract-spaces.md §5 Definition of Done items satisfied: 326 tests pass, all 11 new concepts in registry with live thumbnails, no apply buttons, all geometry.ts files pure, complex.ts dependency-free, color legends present in Cards 4/9/10/11, zero hardcoded hex in src/concepts/.
 **Gates:** build ✅ · test ✅ (326) · lint ✅

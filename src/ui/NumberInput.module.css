@@ -5,29 +5,31 @@
 }
 
 .label {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
 }
 
 .input {
-  width: 80px;
-  padding: var(--space-1) var(--space-2);
-  background: var(--color-surface-2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-sm);
-  color: var(--color-text);
+  width: 56px;
+  padding: 4px 8px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  border-radius: 4px;
+  color: var(--ink);
   font-family: var(--font-mono);
-  font-size: var(--font-size-base);
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+  text-align: right;
   transition: border-color 0.15s;
 }
 
 .input:hover {
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: var(--line-3);
 }
 
 .input:focus {
-  border-color: var(--color-accent);
+  border-color: var(--line-3);
   outline: none;
 }
 
@@ -45,7 +47,7 @@
 .intSlider {
   width: 80px;
   height: 4px;
-  accent-color: var(--color-accent);
+  accent-color: var(--ink);
   cursor: pointer;
   margin-top: 2px;
 }

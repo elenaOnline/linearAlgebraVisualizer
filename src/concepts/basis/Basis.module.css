@@ -1,43 +1,72 @@
-/* Three-region layout for the Basis concept page */
-.layout {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  gap: 0;
-}
-
-/* Top: visualization */
-.vizRegion {
+/* Two-column grid layout for the Basis concept page */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+  padding: 18px 24px 22px;
+  overflow-y: auto;
   flex: 1 1 0;
   min-height: 0;
-  position: relative;
-  overflow: hidden;
 }
 
-/* Bottom row: sandbox + explanation side by side */
-.bottomRow {
+@media (max-width: 960px) {
+  .body { grid-template-columns: 1fr; }
+}
+
+.stageCol {
   display: flex;
-  flex-direction: row;
-  flex-shrink: 0;
-  height: 300px;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+.stageViz {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 300px;
 }
 
-.sandboxRegion {
-  flex: 1 1 0;
-  min-width: 0;
-  overflow-y: auto;
-  padding: var(--space-3) var(--space-4);
-  border-right: 1px solid rgba(255, 255, 255, 0.07);
+.vh {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+  font-family: var(--font-math);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-2);
+  flex-shrink: 0;
 }
 
-.explanationRegion {
-  flex: 1 1 0;
+.grow { flex: 1; }
+
+.canvas {
+  background: var(--panel);
+  padding: 10px;
+  min-height: 240px;
+  flex: 1;
+}
+
+.stageControls {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.rail {
   min-width: 0;
-  overflow-y: auto;
-  padding: var(--space-3) var(--space-4);
 }
 
 /* ---- Sandbox controls ---- */
@@ -63,11 +92,11 @@
 }
 
 .sandboxLabel {
-  font-size: var(--font-size-sm);
+  font-size: 11px;
   font-family: var(--font-mono);
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .dimRow {
@@ -90,32 +119,32 @@
   align-items: center;
   gap: 4px;
   padding: 2px var(--space-2);
-  border-radius: var(--radius-sm);
-  font-size: var(--font-size-sm);
+  border-radius: var(--radius);
+  font-size: 11px;
   font-family: var(--font-mono);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .badgePass {
-  background: rgba(46, 204, 113, 0.15);
-  color: #2ecc71;
-  border: 1px solid rgba(46, 204, 113, 0.35);
+  background: var(--vp-wash);
+  color: var(--vp);
+  border: 1px solid var(--vp-edge);
 }
 
 .badgeFail {
-  background: rgba(231, 76, 60, 0.15);
-  color: #e74c3c;
-  border: 1px solid rgba(231, 76, 60, 0.35);
+  background: var(--v1-wash);
+  color: var(--v1);
+  border: 1px solid var(--v1-edge);
 }
 
 /* ---- Coordinates readout ---- */
 .coordsBox {
-  background: rgba(15, 52, 96, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
+  background: var(--bg-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--radius);
   padding: var(--space-3);
   font-family: var(--font-mono);
-  font-size: var(--font-size-sm);
+  font-size: 12px;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
@@ -129,12 +158,12 @@
 }
 
 .coordsLabel {
-  color: var(--color-text-muted);
+  color: var(--ink-3);
   min-width: 140px;
 }
 
 .coordsValue {
-  color: var(--color-text);
+  color: var(--ink);
 }
 
 /* ---- Explanation panel ---- */
@@ -142,8 +171,9 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
+  font-size: 13px;
+  font-family: var(--font-math);
+  color: var(--ink-2);
   line-height: 1.6;
 }
 
@@ -166,6 +196,6 @@
 
 .tryList li::before {
   content: '→ ';
-  color: var(--color-accent);
+  color: var(--ink-3);
   font-family: var(--font-mono);
 }

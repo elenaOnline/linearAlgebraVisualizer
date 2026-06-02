@@ -1,10 +1,9 @@
-import { useMemo, useRef } from 'react'
-import * as THREE from 'three'
 import type { Vec, Vec3 } from '../../types'
 
 import { Scene } from '../../scene/Scene'
 import { VectorArrow } from '../../scene/VectorArrow'
 import { DraggableHandle } from '../../scene/DraggableHandle'
+import { LatticeLines, LatticeDots } from '../../scene/LatticeLines'
 import { Labels } from '../../scene/Labels'
 import { Panel } from '../../ui/Panel'
 import { VectorInput } from '../../ui/VectorInput'
@@ -13,104 +12,13 @@ import { MathText } from '../../ui/MathText'
 import { Callout } from '../../ui/Callout'
 import { useBasisStore } from './store'
 import { deriveBasisGeometry } from './geometry'
+import { V1, V2, V3, VP } from '../../styles/colors'
 import styles from './Basis.module.css'
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function fmt(n: number, decimals = 3): string {
   return n.toFixed(decimals)
-}
-
-// ── LatticeLines — renders the induced coordinate grid as line segments ──────
-
-interface LatticeLinesProps {
-  latticePoints: Vec3[]
-  basisVecs: Vec3[]
-}
-
-function LatticeLines({ latticePoints, basisVecs }: LatticeLinesProps) {
-  const geometry = useMemo(() => {
-    if (latticePoints.length === 0 || basisVecs.length < 2) return null
-
-    const positions: number[] = []
-
-    // Build a fast lookup map from rounded coords to point
-    const ptMap = new Map<string, Vec3>()
-    const SNAP = 1e-4
-    for (const pt of latticePoints) {
-      const key = `${Math.round(pt[0] / SNAP)},${Math.round(pt[1] / SNAP)},${Math.round(pt[2] / SNAP)}`
-      ptMap.set(key, pt)
-    }
-
-    const b1 = basisVecs[0]
-    const b2 = basisVecs[1]
-    const b3 = basisVecs.length >= 3 ? basisVecs[2] : null
-
-    const dirs = b3 ? [b1, b2, b3] : [b1, b2]
-
-    for (const pt of latticePoints) {
-      for (const dir of dirs) {
-        // Connect pt to pt + dir (i.e., one step in the basis direction)
-        const neighbor: Vec3 = [pt[0] + dir[0], pt[1] + dir[1], pt[2] + dir[2]]
-        const key = `${Math.round(neighbor[0] / SNAP)},${Math.round(neighbor[1] / SNAP)},${Math.round(neighbor[2] / SNAP)}`
-        if (ptMap.has(key)) {
-          positions.push(pt[0], pt[1], pt[2])
-          positions.push(neighbor[0], neighbor[1], neighbor[2])
-        }
-      }
-    }
-
-    if (positions.length === 0) return null
-
-    const geo = new THREE.BufferGeometry()
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-    return geo
-  }, [latticePoints, basisVecs])
-
-  if (!geometry) return null
-
-  return (
-    <lineSegments geometry={geometry}>
-      <lineBasicMaterial
-        color="#f39c12"
-        opacity={0.45}
-        transparent
-        linewidth={1}
-      />
-    </lineSegments>
-  )
-}
-
-// ── LatticeDots — tiny spheres at each lattice point ─────────────────────────
-
-interface LatticeDotsProps {
-  latticePoints: Vec3[]
-}
-
-function LatticeDots({ latticePoints }: LatticeDotsProps) {
-  // Instanced mesh for performance
-  const meshRef = useRef<THREE.InstancedMesh>(null)
-  const dummy = useMemo(() => new THREE.Object3D(), [])
-
-  useMemo(() => {
-    const mesh = meshRef.current
-    if (!mesh) return
-    latticePoints.forEach((pt, i) => {
-      dummy.position.set(pt[0], pt[1], pt[2])
-      dummy.updateMatrix()
-      mesh.setMatrixAt(i, dummy.matrix)
-    })
-    mesh.instanceMatrix.needsUpdate = true
-  }, [latticePoints, dummy])
-
-  if (latticePoints.length === 0) return null
-
-  return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, latticePoints.length]}>
-      <sphereGeometry args={[0.055, 8, 8]} />
-      <meshBasicMaterial color="#f39c12" opacity={0.7} transparent />
-    </instancedMesh>
-  )
 }
 
 // ── SceneContent ─────────────────────────────────────────────────────────────
@@ -171,32 +79,32 @@ function SceneContent({
       {/* Induced lattice — only when valid basis */}
       {isBasis && (
         <>
-          <LatticeLines latticePoints={latticePoints} basisVecs={basisVecs} />
-          <LatticeDots latticePoints={latticePoints} />
+          <LatticeLines latticePoints={latticePoints} basisVecs={basisVecs} color={V1} opacity={0.30} />
+          <LatticeDots latticePoints={latticePoints} color={V1} opacity={0.55} />
         </>
       )}
 
-      {/* Basis vectors */}
-      <VectorArrow vector={b1_3} color="#f39c12" label="b1" showLabel={false} />
-      <VectorArrow vector={b2_3} color="#e94560" label="b2" showLabel={false} />
+      {/* Basis vectors — Plate palette */}
+      <VectorArrow vector={b1_3} color={V1} label="b1" showLabel={false} />
+      <VectorArrow vector={b2_3} color={V2} label="b2" showLabel={false} />
       {dim === '3d' && (
-        <VectorArrow vector={b3_3} color="#1abc9c" label="b3" showLabel={false} />
+        <VectorArrow vector={b3_3} color={V3} label="b3" showLabel={false} />
       )}
 
-      {/* Point p */}
+      {/* Point p — forest (derived/result) */}
       <mesh position={p3}>
         <sphereGeometry args={[0.1, 12, 12]} />
-        <meshBasicMaterial color="#9b59b6" />
+        <meshBasicMaterial color={VP} />
       </mesh>
 
       {/* Draggable handles at tips of basis vectors */}
-      <DraggableHandle position={b1_3} onDrag={onDragB1} color="#f39c12" radius={0.12} dim={dim} />
-      <DraggableHandle position={b2_3} onDrag={onDragB2} color="#e94560" radius={0.12} dim={dim} />
+      <DraggableHandle position={b1_3} onDrag={onDragB1} color={V1} radius={0.12} dim={dim} />
+      <DraggableHandle position={b2_3} onDrag={onDragB2} color={V2} radius={0.12} dim={dim} />
       {dim === '3d' && (
-        <DraggableHandle position={b3_3} onDrag={onDragB3} color="#1abc9c" radius={0.12} dim={dim} />
+        <DraggableHandle position={b3_3} onDrag={onDragB3} color={V3} radius={0.12} dim={dim} />
       )}
       {/* Draggable handle for point p */}
-      <DraggableHandle position={p3} onDrag={onDragP} color="#9b59b6" radius={0.12} dim={dim} />
+      <DraggableHandle position={p3} onDrag={onDragP} color={VP} radius={0.12} dim={dim} />
 
       <Labels items={labelItems} />
     </>
@@ -246,30 +154,35 @@ export function Basis() {
   const calloutVariant = isBasis ? 'success' : 'warning'
 
   return (
-    <div className={styles.layout}>
-      {/* ── Visualization ── */}
-      <div className={styles.vizRegion}>
-        <Scene dim={dim} frameloop="always">
-          <SceneContent
-            b1_3={b1_3}
-            b2_3={b2_3}
-            b3_3={b3_3}
-            p3={p3}
-            latticePoints={latticePoints}
-            isBasis={isBasis}
-            dim={dim}
-            onDragB1={handleDragB1}
-            onDragB2={handleDragB2}
-            onDragB3={handleDragB3}
-            onDragP={handleDragP}
-          />
-        </Scene>
-      </div>
+    <div className={styles.body}>
+      <div className={styles.stageCol}>
+        {/* ── Visualization card ── */}
+        <div className={styles.stageViz}>
+          <div className={styles.vh}>
+            ℬ = &#123;<em>b</em><sub>1</sub>, …, <em>b</em><sub><em>n</em></sub>&#125;, <em>p</em> ∈ ℝ<sup><em>n</em></sup>
+            <span className={styles.grow} />
+          </div>
+          <div className={styles.canvas}>
+            <Scene dim={dim} frameloop="always">
+              <SceneContent
+                b1_3={b1_3}
+                b2_3={b2_3}
+                b3_3={b3_3}
+                p3={p3}
+                latticePoints={latticePoints}
+                isBasis={isBasis}
+                dim={dim}
+                onDragB1={handleDragB1}
+                onDragB2={handleDragB2}
+                onDragB3={handleDragB3}
+                onDragP={handleDragP}
+              />
+            </Scene>
+          </div>
+        </div>
 
-      {/* ── Bottom row ── */}
-      <div className={styles.bottomRow}>
-        {/* Sandbox */}
-        <div className={styles.sandboxRegion}>
+        {/* ── Controls card ── */}
+        <div className={styles.stageControls}>
           <div className={styles.sandboxInner}>
             {/* Dimension toggle */}
             <div className={styles.dimRow}>
@@ -330,9 +243,11 @@ export function Basis() {
           </div>
         </div>
 
-        {/* Explanation */}
-        <div className={styles.explanationRegion}>
-          <Panel title="What is a basis?">
+      </div>
+
+      {/* ── Definition rail ── */}
+      <aside className={styles.rail}>
+        <Panel eyebrow="Definition" title="What is a basis?">
             <div className={styles.explainInner}>
               <p>
                 A <strong>basis</strong> is a linearly independent set that spans the whole space —
@@ -383,8 +298,7 @@ export function Basis() {
               </Callout>
             </div>
           </Panel>
-        </div>
-      </div>
+      </aside>
     </div>
   )
 }

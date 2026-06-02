@@ -1,0 +1,65 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px 10px;
+  background: rgba(20, 20, 18, 0.75);
+  border-radius: var(--radius);
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--bg);
+  min-width: 160px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.label {
+  width: 24px;
+  flex-shrink: 0;
+  text-align: right;
+  opacity: 0.7;
+}
+
+.hueStrip {
+  position: relative;
+  flex: 1;
+  height: 12px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    hsl(0, 85%, 50%),
+    hsl(60, 85%, 50%),
+    hsl(120, 85%, 50%),
+    hsl(180, 85%, 50%),
+    hsl(240, 85%, 50%),
+    hsl(300, 85%, 50%),
+    hsl(360, 85%, 50%)
+  );
+}
+
+.hueTick {
+  position: absolute;
+  top: 14px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 9px;
+}
+
+.brightnessStrip {
+  flex: 1;
+  height: 12px;
+  border-radius: 2px;
+  background: linear-gradient(to right, hsl(0, 0%, 10%), hsl(0, 0%, 90%));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 3px;
+}
+
+.bLabel {
+  font-size: 9px;
+}

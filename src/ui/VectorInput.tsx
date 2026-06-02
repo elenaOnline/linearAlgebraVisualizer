@@ -27,7 +27,7 @@ export function VectorInput({ value, onChange, dim, label }: VectorInputProps) {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} role={label ? 'group' : undefined} aria-label={label}>
       {label && <div className={styles.label}>{label}</div>}
       <div className={styles.inputs}>
         <NumberInput

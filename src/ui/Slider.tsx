@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import styles from './Slider.module.css'
 
 interface SliderProps {
@@ -10,15 +11,17 @@ interface SliderProps {
 }
 
 export function Slider({ value, onChange, min, max, step = 0.01, label }: SliderProps) {
+  const id = useId()
   return (
     <div className={styles.wrapper}>
       {label && (
         <div className={styles.header}>
-          <label className={styles.label}>{label}</label>
+          <label htmlFor={id} className={styles.label}>{label}</label>
           <span className={styles.value}>{value.toFixed(2)}</span>
         </div>
       )}
       <input
+        id={id}
         type="range"
         className={styles.slider}
         value={value}

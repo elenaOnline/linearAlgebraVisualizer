@@ -12,6 +12,7 @@ import { useComplexVectorsStore } from './store'
 import { computeComplexVectorsGeo } from './geometry'
 import { complexArg, complexMag } from '../../linalg/complex'
 import { V1, V2 } from '../../styles/colors'
+import { ComplexColorKey } from '../../ui/ComplexColorKey'
 import styles from './ComplexVectors.module.css'
 
 function complexToColor(z: Complex): string {
@@ -112,11 +113,8 @@ export function ComplexVectors() {
           <div className={styles.combinedLabel}>Combined view — position encodes z₁, color encodes z₂</div>
           <div className={styles.combinedCanvas}>
             <Scene dim="2d" frameloop="always">
-              {/* Color-encoded circle at position z₁ */}
-              <mesh position={[combinedPos[0], combinedPos[1], 0]}>
-                <circleGeometry args={[0.25, 32]} />
-                <meshBasicMaterial color={dotColor} />
-              </mesh>
+              {/* Vector arrow from origin to z₁, hue/brightness encodes z₂ */}
+              <VectorArrow vector={[combinedPos[0], combinedPos[1], 0]} color={dotColor} showLabel={false} />
               {/* Draggable handle — updates z₁ */}
               <DraggableHandle
                 position={[combinedPos[0], combinedPos[1], 0]}
@@ -126,10 +124,7 @@ export function ComplexVectors() {
                 dim="2d"
               />
             </Scene>
-            <div className={styles.colorLegend}>
-              Hue = arg(z₂)<br />
-              Brightness = |z₂|
-            </div>
+            <ComplexColorKey />
           </div>
         </div>
       </div>

@@ -12,6 +12,7 @@ import { useComplexAdditionStore } from './store'
 import { computeComplexAdditionGeo } from './geometry'
 import { complexArg, complexMag } from '../../linalg/complex'
 import { V1, V2, VP } from '../../styles/colors'
+import { ComplexColorKey } from '../../ui/ComplexColorKey'
 import styles from './ComplexAddition.module.css'
 
 function complexToColor(z: Complex): string {
@@ -178,10 +179,7 @@ export function ComplexAddition() {
                 <meshBasicMaterial color={complexToColor(sumZ2)} />
               </mesh>
             </Scene>
-            <div className={styles.colorLegend}>
-              Hue = arg(z₂ comp)<br />
-              Brightness = |z₂ comp|
-            </div>
+            <ComplexColorKey />
           </div>
         </div>
 

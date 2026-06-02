@@ -1,25 +1,26 @@
 .callout {
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   border-left: 3px solid;
-  font-size: var(--font-size-base);
-  line-height: 1.5;
+  font-size: 14px;
+  font-family: var(--font-math);
+  line-height: 1.55;
 }
 
 .info {
-  background: rgba(52, 152, 219, 0.12);
-  border-color: var(--color-axis-z);
-  color: var(--color-text);
+  background: var(--v2-wash);
+  border-color: var(--v2);
+  color: var(--ink-2);
 }
 
 .warning {
-  background: rgba(243, 156, 18, 0.12);
-  border-color: var(--color-basis);
-  color: var(--color-text);
+  background: var(--v3-wash);
+  border-color: var(--v3);
+  color: var(--ink-2);
 }
 
 .success {
-  background: rgba(46, 204, 113, 0.12);
-  border-color: var(--color-axis-y);
-  color: var(--color-text);
+  background: var(--vp-wash);
+  border-color: var(--vp);
+  color: var(--ink-2);
 }

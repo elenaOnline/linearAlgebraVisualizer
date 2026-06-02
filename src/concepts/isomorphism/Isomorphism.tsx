@@ -13,39 +13,40 @@ import { computeIsomorphismGeo } from './geometry'
 import { V1, V2 } from '../../styles/colors'
 import styles from './Isomorphism.module.css'
 
-// ---- Left panel: R² scene content ------------------------------------------
+// ---- Left panel: R³ scene content ------------------------------------------
 
-interface R2ContentProps {
+interface R3ContentProps {
   a: number
   b: number
+  c: number
   onDrag: (pos: Vec3) => void
 }
 
-function R2Content({ a, b, onDrag }: R2ContentProps) {
-  const vec3: Vec3 = [a, b, 0]
+function R3Content({ a, b, c, onDrag }: R3ContentProps) {
+  const vec3: Vec3 = [a, b, c]
   return (
     <>
-      <VectorArrow vector={vec3} color={V1} label="(a,b)" showLabel />
+      <VectorArrow vector={vec3} color={V1} label="(a,b,c)" showLabel />
       <DraggableHandle
         position={vec3}
         onDrag={onDrag}
         color={V1}
         radius={0.13}
-        dim="2d"
+        dim="3d"
       />
     </>
   )
 }
 
-// ---- Right top panel: P₁ coefficient space (read-only) ---------------------
+// ---- Right top panel: P₂ coefficient space (read-only) ---------------------
 
-interface P1ContentProps {
-  polyCoeffs: [number, number]
+interface P2ContentProps {
+  polyCoeffs: [number, number, number]
 }
 
-function P1Content({ polyCoeffs }: P1ContentProps) {
-  // polyCoeffs = [b, a]: constant term first, then x coefficient
-  const vec: Vec3 = [polyCoeffs[0], polyCoeffs[1], 0]
+function P2Content({ polyCoeffs }: P2ContentProps) {
+  // polyCoeffs = [a, b, c]: coefficients of 1, x, x²
+  const vec: Vec3 = [polyCoeffs[0], polyCoeffs[1], polyCoeffs[2]]
   return <VectorArrow vector={vec} color={V2} />
 }
 
@@ -54,37 +55,39 @@ function P1Content({ polyCoeffs }: P1ContentProps) {
 interface GraphContentProps {
   a: number
   b: number
+  c: number
 }
 
-function GraphContent({ a, b }: GraphContentProps) {
-  const fn = useMemo(() => (x: number) => b + a * x, [a, b])
-  return <FunctionGraph fn={fn} xMin={-4} xMax={4} color={V2} lineWidth={2} />
+function GraphContent({ a, b, c }: GraphContentProps) {
+  const fn = useMemo(() => (x: number) => a + b * x + c * x * x, [a, b, c])
+  return <FunctionGraph fn={fn} xMin={-10} xMax={10} color={V2} lineWidth={2} />
 }
 
 // ---- Main component ---------------------------------------------------------
 
 export function Isomorphism() {
-  const { a, b, setA, setB } = useIsomorphismStore()
+  const { a, b, c, setA, setB, setC } = useIsomorphismStore()
 
-  const geo = computeIsomorphismGeo(a, b)
-  const { polyCoeffs, isZero, bIsZero, aIsZero } = geo
+  const geo = computeIsomorphismGeo(a, b, c)
+  const { polyCoeffs, isZero, bIsZero, aIsZero, cIsZero } = geo
 
   const handleDrag = (pos: Vec3) => {
     setA(pos[0])
     setB(pos[1])
+    setC(pos[2])
   }
 
   return (
     <div className={styles.body}>
       <div className={styles.stageCol}>
-        {/* ---- Three panels: left R², right two stacked ---- */}
+        {/* ---- Three panels: left R³, right two stacked ---- */}
         <div className={styles.threePanels}>
-          {/* Left: R² */}
+          {/* Left: R³ */}
           <div className={styles.panelCard}>
-            <div className={styles.panelHeader}>R² — Euclidean plane</div>
+            <div className={styles.panelHeader}>R³ — Euclidean 3-space</div>
             <div className={styles.canvasWrap}>
-              <Scene dim="2d" frameloop="always">
-                <R2Content a={a} b={b} onDrag={handleDrag} />
+              <Scene dim="3d" frameloop="always">
+                <R3Content a={a} b={b} c={c} onDrag={handleDrag} />
               </Scene>
             </div>
           </div>
@@ -92,17 +95,17 @@ export function Isomorphism() {
           {/* Right: two sub-panels stacked */}
           <div className={styles.rightCol}>
             <div className={styles.mappingLabel}>
-              (a, b) ↦ b·1 + a·x
+              (a, b, c) ↦ a·1 + b·x + c·x²
             </div>
 
-            {/* Right top: P₁ coefficient space */}
+            {/* Right top: P₂ coefficient space */}
             <div className={styles.rightSubPanel}>
               <div className={styles.rightSubPanelHeader}>
-                P₁ coefficient space (axes: 1, x) — read-only
+                P₂ coefficient space (axes: 1, x, x²) — read-only
               </div>
               <div className={styles.subCanvasWrap}>
-                <Scene dim="2d" axisLabels={['1', 'x']} frameloop="always">
-                  <P1Content polyCoeffs={polyCoeffs} />
+                <Scene dim="3d" axisLabels={['1', 'x', 'x²']} frameloop="always">
+                  <P2Content polyCoeffs={polyCoeffs} />
                 </Scene>
               </div>
             </div>
@@ -110,11 +113,11 @@ export function Isomorphism() {
             {/* Right bottom: function graph */}
             <div className={styles.rightSubPanel}>
               <div className={styles.rightSubPanelHeader}>
-                Graph of f(x) = b + a·x — read-only
+                Graph of f(x) = a + b·x + c·x² — read-only
               </div>
               <div className={styles.subCanvasWrap}>
                 <Scene dim="2d" frameloop="always">
-                  <GraphContent a={a} b={b} />
+                  <GraphContent a={a} b={b} c={c} />
                 </Scene>
               </div>
             </div>
@@ -126,29 +129,37 @@ export function Isomorphism() {
           <div className={styles.controlsInner}>
             <div className={styles.row}>
               <div className={styles.section}>
-                <div className={styles.label}>a (x-component → x coefficient)</div>
+                <div className={styles.label}>a (constant term coefficient)</div>
                 <NumberInput value={a} onChange={setA} step={0.1} showIntSlider />
               </div>
               <div className={styles.section}>
-                <div className={styles.label}>b (y-component → constant term)</div>
+                <div className={styles.label}>b (x coefficient)</div>
                 <NumberInput value={b} onChange={setB} step={0.1} showIntSlider />
+              </div>
+              <div className={styles.section}>
+                <div className={styles.label}>c (x² coefficient)</div>
+                <NumberInput value={c} onChange={setC} step={0.1} showIntSlider />
               </div>
             </div>
 
             {isZero && (
               <Callout variant="info">
-                Zero vector: the zero polynomial maps to the origin in R².
+                Zero vector: the zero polynomial maps to the origin in R³.
               </Callout>
             )}
             {!isZero && bIsZero && (
               <Callout variant="info">
-                b = 0: the polynomial has no constant term; the graph passes through
-                the origin.
+                b = 0: the polynomial has no x term.
               </Callout>
             )}
             {!isZero && aIsZero && (
               <Callout variant="info">
-                a = 0: a constant polynomial maps to the y-axis.
+                a = 0: the polynomial has no constant term; the graph passes through the origin.
+              </Callout>
+            )}
+            {!isZero && cIsZero && (
+              <Callout variant="info">
+                c = 0: the polynomial has no x² term; it is linear (or constant).
               </Callout>
             )}
           </div>
@@ -168,33 +179,33 @@ export function Isomorphism() {
 
             <div className={styles.mathBlock}>
               <MathText
-                tex="\varphi: \mathbb{R}^2 \xrightarrow{\sim} P_1"
+                tex="\varphi: \mathbb{R}^3 \xrightarrow{\sim} P_2"
                 display
               />
             </div>
             <div className={styles.mathBlock}>
               <MathText
-                tex="\varphi(a,\,b) = b \cdot 1 + a \cdot x"
+                tex="\varphi(a,\,b,\,c) = a \cdot 1 + b \cdot x + c \cdot x^2"
                 display
               />
             </div>
 
             <p>
-              The left panel lives in R²: vectors are pairs of real numbers. The top
-              right panel lives in P₁: vectors are linear polynomials, with their
-              coefficient pair (constant term, x-coefficient) shown as a point. The
-              bottom right panel graphs the polynomial as a function.
+              The left panel lives in R³: vectors are triples of real numbers. The top
+              right panel lives in P₂: vectors are quadratic polynomials, with their
+              coefficient triple (constant, x, x²) shown as a point. The bottom right
+              panel graphs the polynomial as a function.
             </p>
 
             <p>
-              All three representations describe the <em>same abstract 2D vector</em>.
-              Drag the vector in R² and watch P₁ and its graph update simultaneously.
+              All three representations describe the <em>same abstract 3D vector</em>.
+              Drag the vector in R³ and watch P₂ and its graph update simultaneously.
             </p>
 
             <ul className={styles.tryList}>
-              <li>Drag to a = 0 — the polynomial becomes a constant function</li>
-              <li>Drag to b = 0 — the polynomial has no constant term</li>
-              <li>Try a = 1, b = 0 — the polynomial is just x</li>
+              <li>Set c = 0 — the polynomial becomes linear (lives in P₁)</li>
+              <li>Set a = b = 0 — a pure quadratic through the origin</li>
+              <li>Try a = 0, b = 0, c = 1 — the polynomial is just x²</li>
               <li>What does the zero vector look like in each representation?</li>
             </ul>
           </div>

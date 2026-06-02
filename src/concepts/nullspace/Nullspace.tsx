@@ -9,14 +9,16 @@ import { VectorInput } from '../../ui/VectorInput'
 import { DimensionToggle } from '../../ui/DimensionToggle'
 import { MathText } from '../../ui/MathText'
 import { Callout } from '../../ui/Callout'
+import { Panel } from '../../ui/Panel'
 import { useNullspaceStore } from './store'
 import { deriveNullspaceGeometry } from './geometry'
 import type { Vec3 } from '../../types'
+import { V1, V2, VP } from '../../styles/colors'
 import styles from './Nullspace.module.css'
 
-const NULLSPACE_COLOR = '#e74c3c'
-const PROBE_COLOR = '#f39c12'
-const AX_COLOR = '#3498db'
+const NULLSPACE_COLOR = VP  // forest (vp) — the derived subspace
+const PROBE_COLOR = V1      // vermilion (v1) — the input vector x
+const AX_COLOR = V2         // prussian (v2) — the output vector Ax
 
 export function Nullspace() {
   const { dim, A, x, constrainToNull, setDim, setA, setX, setConstrainToNull } =
@@ -118,9 +120,15 @@ export function Nullspace() {
           : 'all of ℝⁿ'
 
   return (
-    <div className={styles.layout}>
-      {/* ── Visualization region ── */}
-      <div className={styles.vizRegion}>
+    <div className={styles.body}>
+      <div className={styles.stageCol}>
+        {/* ── Visualization card ── */}
+        <div className={styles.stageViz}>
+          <div className={styles.vh}>
+            <em>N</em>(<em>A</em>) = &#123;<em>x</em> : <em>Ax</em> = 0&#125;
+            <span className={styles.grow} />
+          </div>
+          <div className={styles.canvas}>
         <Scene dim={dim}>
           {/* Nullspace subspace */}
           <SubspaceMesh
@@ -155,8 +163,8 @@ export function Nullspace() {
           />
         </Scene>
 
-        {/* Rank–nullity overlay */}
-        <div className={styles.rankNullityOverlay}>
+            {/* Rank–nullity overlay */}
+            <div className={styles.rankNullityOverlay}>
           <div className={styles.rankNullityTitle}>Rank–Nullity</div>
           <div className={styles.rankNullityRow}>
             <span>rank(A)</span>
@@ -177,13 +185,12 @@ export function Nullspace() {
               <span className={styles.invertibleBadge}>invertible</span>
             )}
           </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* ── Bottom row ── */}
-      <div className={styles.bottomRow}>
-        {/* Sandbox */}
-        <div className={styles.sandboxRegion}>
+        {/* ── Controls card ── */}
+        <div className={styles.stageControls}>
           <div className={styles.sandboxInner}>
             {/* Dimension toggle */}
             <div className={styles.dimRow}>
@@ -215,10 +222,12 @@ export function Nullspace() {
           </div>
         </div>
 
-        {/* Explanation */}
-        <div className={styles.explanationRegion}>
+      </div>
+
+      {/* ── Definition rail ── */}
+      <aside className={styles.rail}>
+        <Panel eyebrow="Definition" title="Nullspace (Kernel)">
           <div className={styles.explainInner}>
-            <h4>Nullspace (Kernel)</h4>
             <p>
               The nullspace is the set of all vectors that the matrix "crushes to zero"
               — everything in the domain that maps to the origin.
@@ -261,8 +270,8 @@ export function Nullspace() {
               </div>
             </Callout>
           </div>
-        </div>
-      </div>
+        </Panel>
+      </aside>
     </div>
   )
 }

@@ -27,7 +27,7 @@ const PLANE_EXTENT = 25
 
 export function SubspaceMesh({
   geometry,
-  color = '#1abc9c',
+  color = '#3d5e2b',
   opacity = 0.35,
   dim: _dim,
 }: SubspaceMeshProps) {

@@ -3,7 +3,7 @@ import { Scene } from '../../scene/Scene'
 import { VectorArrow } from '../../scene/VectorArrow'
 import { DraggableHandle } from '../../scene/DraggableHandle'
 import { FunctionGraph } from '../../scene/FunctionGraph'
-import { StackingIndicators } from '../../scene/StackingIndicators'
+import { ShadedArea } from '../../scene/ShadedArea'
 import { Line } from '@react-three/drei'
 import { NumberInput } from '../../ui/NumberInput'
 import { Panel } from '../../ui/Panel'
@@ -52,12 +52,10 @@ function CoeffSceneContent({
 // ---- Main component ----------------------------------------------------------
 
 export function PolyAddition() {
-  const { deg, p, q, showIndicators, setDeg, setP, setQ, setShowIndicators } =
-    usePolyAdditionStore()
+  const { deg, p, q, setDeg, setP, setQ } = usePolyAdditionStore()
 
   const geo = computePolyAdditionGeo(deg, p, q)
-  const { pCoeffs, qCoeffs, sumCoeffs, pGraph, qGraph, sumGraph, stackingSamples, sumIsZero } =
-    geo
+  const { pCoeffs, qCoeffs, sumCoeffs, pGraph, sumGraph, sumIsZero } = geo
 
   const handleDragP = (pos: Vec3) => {
     setP([pos[0], pos[1], deg === 'p2' ? pos[2] : 0])
@@ -77,9 +75,6 @@ export function PolyAddition() {
   const pPos2d: Vec3 = [pCoeffs[0], pCoeffs[1], 0]
   const qPos2d: Vec3 = [qCoeffs[0], qCoeffs[1], 0]
   const sumPos2d: Vec3 = [sumCoeffs[0], sumCoeffs[1], 0]
-
-  // suppress "unused variable" — graphPoints are stored but only fn versions used for FunctionGraph
-  void pGraph; void qGraph; void sumGraph
 
   return (
     <div className={styles.body}>
@@ -127,20 +122,11 @@ export function PolyAddition() {
             </div>
             <div className={styles.canvasWrap}>
               <Scene dim="2d" axisLabels={['x', 'f(x)']} frameloop="always">
-                <FunctionGraph fn={pFn} xMin={-4} xMax={4} color={V1} />
-                <FunctionGraph fn={qFn} xMin={-4} xMax={4} color={V2} />
-                <FunctionGraph fn={sumFn} xMin={-4} xMax={4} color={VP} />
-                {showIndicators && (
-                  <StackingIndicators
-                    samples={stackingSamples.map((s) => ({
-                      x: s.x,
-                      baseY: s.fAtX,
-                      topY: s.sumAtX,
-                    }))}
-                    colorBottom={V1}
-                    colorTop={V2}
-                  />
-                )}
+                {/* Shaded region shows q's additive contribution between p(x) and (p+q)(x) */}
+                <ShadedArea lower={pGraph} upper={sumGraph} color={V2} opacity={0.25} />
+                <FunctionGraph fn={pFn} xMin={-10} xMax={10} color={V1} />
+                <FunctionGraph fn={qFn} xMin={-10} xMax={10} color={V2} />
+                <FunctionGraph fn={sumFn} xMin={-10} xMax={10} color={VP} />
               </Scene>
             </div>
           </div>
@@ -151,14 +137,6 @@ export function PolyAddition() {
           <div className={styles.controlsInner}>
             <div className={styles.toggleRow}>
               <PolyDegToggle value={deg} onChange={setDeg} />
-              <label className={styles.toggleLabel}>
-                <input
-                  type="checkbox"
-                  checked={showIndicators}
-                  onChange={(e) => setShowIndicators(e.target.checked)}
-                />
-                Show stacking indicators
-              </label>
             </div>
 
             <div className={styles.row}>
@@ -224,8 +202,8 @@ export function PolyAddition() {
             </p>
 
             <p>
-              The stacking indicators show, at six sample x-values, how the value
-              of q(x) "stacks on top of" p(x) to reach (p+q)(x).
+              The shaded region shows, at every x-value, how q(x) shifts p(x)
+              upward or downward to reach (p+q)(x).
             </p>
 
             <ul className={styles.tryList}>

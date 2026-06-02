@@ -18,13 +18,14 @@ export function Labels({ items }: LabelsProps) {
           key={i}
           position={item.position}
           style={{
-            color: 'var(--color-text)',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '12px',
+            color: 'var(--ink)',
+            fontFamily: 'var(--font-math)',
+            fontStyle: 'italic',
+            fontSize: '13px',
             userSelect: 'none',
             pointerEvents: 'none',
             whiteSpace: 'nowrap',
-            background: 'rgba(22, 33, 62, 0.7)',
+            background: 'rgba(242, 241, 239, 0.88)',
             padding: '2px 6px',
             borderRadius: '3px',
           }}

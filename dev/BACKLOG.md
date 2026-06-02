@@ -324,7 +324,7 @@ gap identified after initial delivery. B-21 is folded into B-16 (same root cause
 ### [B-15] App-wide: replace "arg" with "angle" in all UI text
 **Priority:** P1
 **Category:** polish
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** Every label, callout, slider annotation, and legend that uses "arg"
 as the complex angle function must be changed to "angle." The term is opaque to the
@@ -347,7 +347,7 @@ target audience (newcomers to linear algebra).
 ### [B-16] Extend polynomial curve and complex domain render distance
 **Priority:** P1
 **Category:** polish
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** Polynomial function graphs are sampled over [-4, 4] and appear to end
 within the visible viewport. The complex-poly domain coloring is bounded to ±2 and also
@@ -374,7 +374,7 @@ Card 4 domain extension originally listed as a separate item.)
 ### [B-17] Add hue/brightness visual color key (Cards 4, 9, 10, 11)
 **Priority:** P1
 **Category:** polish
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** Cards that encode angle as hue and magnitude as brightness describe
 the encoding only in text. A first-time viewer cannot decode the visualization without
@@ -403,7 +403,7 @@ a visual reference key.
 ### [B-18] Replace stacking indicators with shaded regions (Cards 2, 3)
 **Priority:** P1
 **Category:** polish
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** The vertical bar stacking indicators in poly-addition and poly-scalar-mul
 add visual noise without aiding comprehension. Replace with a shaded area between the
@@ -432,7 +432,7 @@ base curve and the result curve.
 ### [B-19] Card 4: coefficient Argand panels render vectors not points
 **Priority:** P1
 **Category:** polish
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** The three mini Argand panels for a₀, a₁, a₂ in the complex-poly card
 render only a DraggableHandle sphere. Each should also render a VectorArrow from the
@@ -453,7 +453,7 @@ origin to the coefficient position, consistent with how vectors are shown elsewh
 ### [B-20] Card 9: combined view renders as vector not point
 **Priority:** P1
 **Category:** polish
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** The combined view in ComplexVectors renders z₁ as a colored circle
 (circleGeometry). It should render as a vector arrow from the origin, consistent with
@@ -474,7 +474,7 @@ the rest of the application.
 ### [B-21] Card 4: add Re/Im and magnitude axis labels
 **Priority:** P1
 **Category:** polish
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** The main domain-coloring panel in complex-poly lacks Re/Im axis labels.
 In 3D surface mode, the vertical height axis (representing |p(z)|) is also unlabeled.
@@ -494,7 +494,7 @@ In 3D surface mode, the vertical height axis (representing |p(z)|) is also unlab
 ### [B-22] Card 5: add shared functional graph to Differentiation
 **Priority:** P1
 **Category:** feature
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** Differentiation currently shows domain and image only as points in
 coefficient space. Adding a shared functional-graph panel (f and f′ on the same axes)
@@ -522,7 +522,7 @@ gives the map a concrete geometric sense — the derivative line tracks the orig
 ### [B-23] Card 7: Isomorphism R² ≅ P₁ → R³ ≅ P₂
 **Priority:** P1
 **Category:** feature
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** The current isomorphism φ: R² → P₁ maps (a,b) ↦ b + a·x. Replace with
 φ: R³ → P₂ mapping (a,b,c) ↦ a·1 + b·x + c·x². The left panel becomes a 3D R³ scene;
@@ -553,7 +553,7 @@ the updated polynomial graph.
 ### [B-24] Card 9: combined view undersized
 **Priority:** P2
 **Category:** polish
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** The combined right-side panel in ComplexVectors is smaller than its
 container. It should occupy the full available panel space.
@@ -571,7 +571,7 @@ container. It should occupy the full available panel space.
 ### [B-25] Card 10: grey out complex-addition gallery tile
 **Priority:** P1
 **Category:** ux
-**Status:** open
+**Status:** done
 **Depends on:** none
 **Description:** The complex-addition card has no satisfying visualization and should
 be visually disabled in the gallery. The registry entry and page remain; only the

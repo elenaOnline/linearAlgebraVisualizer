@@ -28,10 +28,19 @@ updates in real time as the user changes any exposed variable.
 
 ## 2. Current status
 
-Greenfield. The repository currently contains only the planning documents
-`CLAUDE.md`, `SPEC.md`, and `GOAL_PROMPT.md`. The application does not exist yet
-and must be built from scratch. `GOAL_PROMPT.md` is a meta-document for the human
-operator; the build itself does not depend on it.
+**Phases 1 and 2 are complete.** The application exists and all seven concept
+modules are implemented. Phase 3 (integration & polish) is in progress.
+
+- Phase 1 (foundation scaffold, `src/linalg/`, shared `scene/`/`ui/` primitives,
+  routing, registry): complete — gates pass, 115 tests.
+- Phase 2 (all seven concept modules with geometry, stores, and thumbnails):
+  complete.
+- Phase 3 (visual polish, style guide migration, performance): in progress.
+- Phase 4 (verification gate): not yet run.
+
+For the running decisions log and gate results by phase, see `STATUS.md`.
+For completed milestone details, see `dev/DONE.md`.
+For pending and in-flight work, see `dev/BACKLOG.md` and `dev/ACTIVE.md`.
 
 ## 3. Resolved decisions
 
@@ -197,8 +206,19 @@ Wire `build`, `test`, and `lint` so they are usable as objective gates.
 
 ## 8. Development workflow
 
-The build is large; decompose it and use subagents/subagent teams where they add
-value. Recommended phasing:
+### Starting any work session
+
+Before writing code, read `dev/BACKLOG.md` to understand pending work and
+`dev/ACTIVE.md` to see what is already in flight. When you begin a task, move it
+from BACKLOG to ACTIVE with a note on what you are doing and which files are in
+scope. When done, move it to `dev/DONE.md`. See `dev/README.md` for the full
+protocol.
+
+### Phasing for the initial build (or a major rework)
+
+Decompose large changes and use subagents/subagent teams where they add value.
+The initial build followed four phases; the same pattern applies to any large
+change set:
 
 **Phase 1 — Foundation (sequential, do not parallelize).**
 Scaffold the Vite/React/TS project. Build and fully unit-test `src/linalg/`.
@@ -221,22 +241,27 @@ colors); a basic keyboard-accessibility pass on all controls.
 
 **Phase 4 — Verification gate.** See §9.
 
-Use the task list to track phases and concepts. Initialize a git repository early
-and commit at the end of each phase and each completed concept, so a long
-autonomous run has rollback points. If you become blocked, write the blocker into
-`STATUS.md` and continue with unblocked work rather than stopping.
+### General rules
+
+Commit at the end of each completed phase or concept so a long autonomous run has
+rollback points. If you become blocked, write the blocker into `STATUS.md` under
+"Blockers" and continue with unblocked work rather than stopping.
 
 ## 9. Verification gate
 
-The project is **not done** until a fresh, independent verification subagent is
-satisfied. This is a hard completion condition.
+**This gate applies to any significant change** — a new concept module, a change
+to shared primitives, a style system overhaul, or the initial delivery. It is a
+standing operating procedure, not a one-time completion condition.
+
+A change is **not done** until a fresh, independent verification subagent is
+satisfied. The procedure:
 
 - Spawn a **new** subagent for verification — one with no involvement in writing
-  the code, so its review is independent.
+  the code being reviewed, so its verdict is independent.
 - Give it only `SPEC.md` and the product description, and instruct it to judge
-  the built application **solely against them** — critically but fairly. It must
-  not invent new requirements or move goalposts, and it must distinguish a real
-  spec violation (blocking) from a subjective nice-to-have (note, non-blocking).
+  the application **solely against them** — critically but fairly. It must not
+  invent new requirements or move goalposts, and it must distinguish a real spec
+  violation (blocking) from a subjective nice-to-have (note, non-blocking).
 - It must run the objective gates itself — `npm install`, `npm run build`,
   `npm run test`, `npm run lint` — and treat any failure as blocking.
 - It must check every item of the `SPEC.md` Definition of Done, with explicit
@@ -247,15 +272,18 @@ satisfied. This is a hard completion condition.
 - It returns a verdict: **PASS**, or a numbered list of concrete, spec-referenced
   gaps.
 - On a non-PASS verdict, fix the listed gaps, then spawn **another** fresh
-  verification subagent and repeat. Loop until PASS, up to a sensible cap
-  (~5 cycles). If still not passing at the cap, stop and write the remaining gaps
-  to `STATUS.md` — do not declare completion.
+  verification subagent and repeat. Loop until PASS, up to a cap of 5 cycles.
+  If still not passing at the cap, stop and write the remaining gaps to
+  `STATUS.md` under "Blockers" — do not declare completion.
 
 The verifier reviews code, builds, and tests; it cannot see rendered pixels.
 Compensate by keeping math and geometry in tested pure functions (§6.3) and by
 writing tests that assert real-time wiring (a store change produces changed
 geometry output). Visual judgment is the human operator's; structural and
 mathematical correctness must be verifiable from code and tests.
+
+The full verification protocol, including step-by-step instructions for running
+the gate, is in `dev/PROTOCOL.md`.
 
 ## 10. Conventions
 
@@ -281,3 +309,23 @@ Future concepts and features are expected. Protect these properties:
 When `SPEC.md` and this file disagree, `SPEC.md` wins on *what* to build and this
 file wins on *how*. If something is genuinely unspecified, choose the option that
 is most mathematically honest and leave a note in `STATUS.md`.
+
+## 12. Dev tracking
+
+The `dev/` directory is the informational hub for ongoing development. Agents
+must read and update it as part of normal work.
+
+| File | Purpose | When to read | When to write |
+|---|---|---|---|
+| `dev/README.md` | How to use the tracker | At start of any session | Never (human-maintained) |
+| `dev/PROTOCOL.md` | Verification loop procedure | Before running the gate | Never (human-maintained) |
+| `dev/BACKLOG.md` | Prioritized pending work | At start of any session | Add items; move to ACTIVE when starting |
+| `dev/ACTIVE.md` | In-flight work | At start of any session | Update when starting/pausing/finishing |
+| `dev/DONE.md` | Completed milestone log | For context on past decisions | Append when a task is fully complete |
+
+**Rules:**
+- Check BACKLOG and ACTIVE before picking up any work so you don't duplicate effort.
+- When you start a task: move the item from BACKLOG to ACTIVE, fill in files-in-scope and acceptance criteria.
+- When you finish a task: remove it from ACTIVE and append a brief entry to DONE.
+- Do not delete from DONE.md.
+- When a non-obvious decision is made (a workaround, a spec ambiguity, a choice between valid options), record it in `STATUS.md` under "Decisions log" with a date.

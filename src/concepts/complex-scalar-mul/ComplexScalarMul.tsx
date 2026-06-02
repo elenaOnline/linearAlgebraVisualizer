@@ -13,6 +13,7 @@ import { useComplexScalarMulStore } from './store'
 import { computeComplexScalarMulGeo } from './geometry'
 import { complexArg, complexMag, complexPolar } from '../../linalg/complex'
 import { V1, VP } from '../../styles/colors'
+import { ComplexColorKey } from '../../ui/ComplexColorKey'
 import styles from './ComplexScalarMul.module.css'
 
 function complexToColor(z: Complex): string {
@@ -169,7 +170,7 @@ export function ComplexScalarMul() {
             />
           </div>
           <div className={styles.sliderSection}>
-            <div className={styles.sliderLabel}>arg(c) — {rotationAngle.toFixed(3)} rad</div>
+            <div className={styles.sliderLabel}>angle(c) — {rotationAngle.toFixed(3)} rad</div>
             <input
               type="range"
               className={styles.slider}
@@ -223,10 +224,7 @@ export function ComplexScalarMul() {
                 <meshBasicMaterial color={complexToColor(scaledZ2)} />
               </mesh>
             </Scene>
-            <div className={styles.colorLegend}>
-              Hue = arg(z₂)<br />
-              Brightness = |z₂|
-            </div>
+            <ComplexColorKey />
           </div>
         </div>
       </div>
@@ -248,12 +246,12 @@ export function ComplexScalarMul() {
 
             <p>
               Since c is complex, each multiplication is a rotation and scaling in the
-              complex plane. Both components rotate by the <em>same</em> angle arg(c)
+              complex plane. Both components rotate by the <em>same</em> angle angle(c)
               and scale by the <em>same</em> factor |c| — simultaneously.
             </p>
 
             <p>
-              In the combined view, the hue shifts by arg(c) (rotation of z₂) and the
+              In the combined view, the hue shifts by angle(c) (rotation of z₂) and the
               position changes by |c| × rotation (transformation of z₁). A positive real
               scalar only scales — no hue shift, no rotation. The unit scalar i rotates
               both components exactly 90°.
@@ -268,7 +266,7 @@ export function ComplexScalarMul() {
 
             <ul className={styles.tryList}>
               <li>Set |c| = 1 — pure rotation, magnitudes unchanged</li>
-              <li>Set arg(c) = π/2 (c = i) — quarter-turn on both components</li>
+              <li>Set angle(c) = π/2 (c = i) — quarter-turn on both components</li>
               <li>Set c = 0 — collapses the entire vector to zero</li>
               <li>Set Im(c) = 0, Re(c) &gt; 0 — no rotation, only scaling</li>
             </ul>

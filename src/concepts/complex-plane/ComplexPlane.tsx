@@ -149,7 +149,7 @@ export function ComplexPlane() {
                 />
               </div>
               <div className={styles.sliderSection}>
-                <div className={styles.sliderLabel}>arg(c) — rotation ({rotationAngle.toFixed(3)} rad)</div>
+                <div className={styles.sliderLabel}>angle(c) — rotation ({rotationAngle.toFixed(3)} rad)</div>
                 <input
                   type="range"
                   className={styles.slider}
@@ -197,7 +197,7 @@ export function ComplexPlane() {
 
             <p>
               <strong>Multiplication is rotation + scaling.</strong> Multiplying z by c rotates z by
-              arg(c) and scales it by |c|. This is something real multiplication cannot do — real
+              angle(c) and scales it by |c|. This is something real multiplication cannot do — real
               scalars only scale, never rotate.
             </p>
 
@@ -206,14 +206,14 @@ export function ComplexPlane() {
             </div>
 
             <p>
-              The product (green) is obtained by rotating z (red) by arg(c) and scaling by |c|.
+              The product (green) is obtained by rotating z (red) by angle(c) and scaling by |c|.
               The blue arc shows the rotation.
             </p>
 
             <ul className={styles.tryList}>
               <li>Drag z (red) or c (blue) to update the product in real time</li>
               <li>Set |c| = 1 with the slider — pure rotation, no scaling</li>
-              <li>Set arg(c) = π/2 — multiplying by i gives a 90° turn</li>
+              <li>Set angle(c) = π/2 — multiplying by i gives a 90° turn</li>
               <li>Set c = 0 — the product collapses to the origin</li>
             </ul>
           </div>

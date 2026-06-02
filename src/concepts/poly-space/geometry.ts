@@ -10,8 +10,8 @@ export interface PolySpaceGeo {
 }
 
 const SAMPLES = 200
-const X_MIN = -4
-const X_MAX = 4
+const X_MIN = -10
+const X_MAX = 10
 const Y_CLAMP = 8
 
 export function computePolySpaceGeo(

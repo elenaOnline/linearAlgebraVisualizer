@@ -83,8 +83,8 @@ export function DraggableHandle({
       if (!raycasterRef.current.ray.intersectPlane(dragPlane.current, hitPoint)) return
       hitPoint.sub(offset.current)
 
-      // Shift key → snap to nearest integer
-      const snap = (v: number) => (e.shiftKey ? Math.round(v) : v)
+      // Shift key → snap to nearest 0.25
+      const snap = (v: number) => (e.shiftKey ? Math.round(v * 4) / 4 : v)
 
       const newPos: Vec3 =
         dimRef.current === '2d'

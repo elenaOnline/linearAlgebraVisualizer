@@ -1,10 +1,11 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import type { Vec3 } from '../../types'
 import { Scene } from '../../scene/Scene'
 import { VectorArrow } from '../../scene/VectorArrow'
 import { deriveLinearMapsGeometry } from './geometry'
 import type { Mat2x2 } from '../../types'
+import { V1, V2 } from '../../styles/colors'
 import styles from '../thumbnail.module.css'
 
 // Approx 30° rotation-ish matrix, slightly scaled
@@ -28,28 +29,48 @@ function ThumbnailGrid({ gridLines }: ThumbnailGridProps) {
 
   return (
     <lineSegments geometry={geometry}>
-      <lineBasicMaterial color="#e94560" opacity={0.5} transparent linewidth={1} />
+      <lineBasicMaterial color={V1} opacity={0.35} transparent linewidth={1} />
     </lineSegments>
   )
 }
 
 export function LinearMapsThumbnail() {
   const geo = deriveLinearMapsGeometry(THUMB_A, [1, 1], 1, '2d')
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setMounted(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '100px' }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   return (
-    <div className={styles.thumbnail}>
-      <Scene dim="2d" frameloop="demand">
-        {/* Transformed grid */}
-        <ThumbnailGrid gridLines={geo.gridLines} />
+    <div ref={containerRef} className={styles.thumbnail}>
+      {mounted && (
+        <Scene dim="2d" frameloop="demand">
+          {/* Transformed grid */}
+          <ThumbnailGrid gridLines={geo.gridLines} />
 
-        {/* Standard basis vectors (faint) */}
-        <VectorArrow vector={[1, 0, 0]} color="#e74c3c" opacity={0.3} showLabel={false} />
-        <VectorArrow vector={[0, 1, 0]} color="#2ecc71" opacity={0.3} showLabel={false} />
+          {/* Standard basis vectors (faint) */}
+          <VectorArrow vector={[1, 0, 0]} color={V1} opacity={0.20} showLabel={false} />
+          <VectorArrow vector={[0, 1, 0]} color={V2} opacity={0.20} showLabel={false} />
 
-        {/* Transformed basis vectors */}
-        <VectorArrow vector={geo.col1} color="#e74c3c" showLabel={false} />
-        <VectorArrow vector={geo.col2} color="#2ecc71" showLabel={false} />
-      </Scene>
+          {/* Transformed basis vectors */}
+          <VectorArrow vector={geo.col1} color={V1} showLabel={false} />
+          <VectorArrow vector={geo.col2} color={V2} showLabel={false} />
+        </Scene>
+      )}
     </div>
   )
 }

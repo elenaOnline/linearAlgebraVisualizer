@@ -34,7 +34,7 @@ export function MatrixInput({ value, onChange, dim, label }: MatrixInputProps) {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} role={label ? 'group' : undefined} aria-label={label}>
       {label && <div className={styles.label}>{label}</div>}
       <div
         className={styles.grid}
@@ -46,7 +46,9 @@ export function MatrixInput({ value, onChange, dim, label }: MatrixInputProps) {
               key={`${row}-${col}`}
               value={(value as number[][])[row][col]}
               onChange={(v) => handleChange(row, col, v)}
+              label={`[${row + 1},${col + 1}]`}
               step={0.1}
+              showIntSlider
             />
           )),
         )}

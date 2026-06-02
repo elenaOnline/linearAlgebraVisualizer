@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 import styles from './NumberInput.module.css'
 
 interface NumberInputProps {
@@ -20,6 +20,7 @@ export function NumberInput({
   step = 0.1,
   showIntSlider = false,
 }: NumberInputProps) {
+  const id = useId()
   const [localValue, setLocalValue] = useState(String(value))
   const [focused, setFocused] = useState(false)
 
@@ -53,8 +54,9 @@ export function NumberInput({
 
   return (
     <div className={styles.wrapper}>
-      {label && <label className={styles.label}>{label}</label>}
+      {label && <label htmlFor={id} className={styles.label}>{label}</label>}
       <input
+        id={id}
         type="number"
         className={styles.input}
         value={localValue}
@@ -68,6 +70,7 @@ export function NumberInput({
       {showIntSlider && (
         <input
           type="range"
+          aria-label={label ? `${label} integer slider` : 'integer slider'}
           className={styles.intSlider}
           min={sliderMin}
           max={sliderMax}

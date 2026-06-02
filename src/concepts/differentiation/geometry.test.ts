@@ -43,4 +43,62 @@ describe('computeDifferentiationGeo', () => {
     // Sanity: a2 must be >= EPS for onKernel to be false
     expect(Math.abs(0) < EPS && Math.abs(1) < EPS).toBe(false)
   })
+
+  // ---- fPoints and dfPoints ---------------------------------------------------
+
+  it('fPoints: linear polynomial a0=1, a1=2, a2=0 → f(0)=1', () => {
+    const geo = computeDifferentiationGeo(1, 2, 0)
+    expect(geo.fPoints).toBeDefined()
+    expect(geo.fPoints.length).toBe(201) // 0..200 inclusive
+    // x=0 is at the midpoint (index 100 of 200 samples, x in [-10,10])
+    const midPt = geo.fPoints[100]
+    expect(midPt[0]).toBeCloseTo(0, 9)
+    expect(midPt[1]).toBeCloseTo(1, 9) // f(0) = 1 + 2*0 + 0 = 1
+  })
+
+  it('fPoints: quadratic a0=0, a1=0, a2=1 → f(2)=4', () => {
+    const geo = computeDifferentiationGeo(0, 0, 1)
+    // x=2 falls at i where -10 + (i/200)*20 = 2 → i = 120
+    const pt = geo.fPoints[120]
+    expect(pt[0]).toBeCloseTo(2, 9)
+    expect(pt[1]).toBeCloseTo(4, 9) // f(2) = 0 + 0 + 1*4 = 4
+  })
+
+  it('dfPoints: linear a0=1, a1=2, a2=0 → f′(0)=2', () => {
+    const geo = computeDifferentiationGeo(1, 2, 0)
+    expect(geo.dfPoints).toBeDefined()
+    expect(geo.dfPoints.length).toBe(201)
+    const midPt = geo.dfPoints[100] // x=0
+    expect(midPt[0]).toBeCloseTo(0, 9)
+    expect(midPt[1]).toBeCloseTo(2, 9) // f′(0) = 2 + 2*0*0 = 2
+  })
+
+  it('dfPoints: quadratic a0=0, a1=0, a2=1 → f′(2)=4', () => {
+    const geo = computeDifferentiationGeo(0, 0, 1)
+    // x=2 at index 120
+    const pt = geo.dfPoints[120]
+    expect(pt[0]).toBeCloseTo(2, 9)
+    expect(pt[1]).toBeCloseTo(4, 9) // f′(2) = 0 + 2*1*2 = 4
+  })
+
+  it('dfPoints: a0 does not affect derivative', () => {
+    const geo1 = computeDifferentiationGeo(0, 3, 1)
+    const geo2 = computeDifferentiationGeo(99, 3, 1)
+    // All dfPoints should be identical
+    for (let i = 0; i < geo1.dfPoints.length; i++) {
+      expect(geo1.dfPoints[i][1]).toBeCloseTo(geo2.dfPoints[i][1], 9)
+    }
+  })
+
+  it('fPoints: changing coefficients updates sampled values', () => {
+    const geo1 = computeDifferentiationGeo(0, 1, 0) // f(x) = x
+    const geo2 = computeDifferentiationGeo(0, 2, 0) // f(x) = 2x
+    // At x=5 (index 150): geo1 should be 5, geo2 should be 10
+    const pt1 = geo1.fPoints[150]
+    const pt2 = geo2.fPoints[150]
+    expect(pt1[0]).toBeCloseTo(5, 9)
+    expect(pt1[1]).toBeCloseTo(5, 9)
+    expect(pt2[0]).toBeCloseTo(5, 9)
+    expect(pt2[1]).toBeCloseTo(10, 9)
+  })
 })

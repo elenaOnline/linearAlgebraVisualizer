@@ -1,21 +1,23 @@
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import type { Vec3 } from '../../types'
 import type { Complex } from '../../types'
 import { ArgandPlane } from '../../scene/ArgandPlane'
 import { DomainColoringMesh } from '../../scene/DomainColoringMesh'
 import { Scene } from '../../scene/Scene'
 import { DraggableHandle } from '../../scene/DraggableHandle'
+import { VectorArrow } from '../../scene/VectorArrow'
 import { NumberInput } from '../../ui/NumberInput'
 import { Panel } from '../../ui/Panel'
 import { MathText } from '../../ui/MathText'
 import { Callout } from '../../ui/Callout'
+import { ComplexColorKey } from '../../ui/ComplexColorKey'
 import { evalComplexPoly } from '../../linalg/complex'
 import { useComplexPolyStore } from './store'
 import { computeComplexPolyGeo } from './geometry'
 import { V1, V2, V3 } from '../../styles/colors'
 import styles from './ComplexPoly.module.css'
 
-const BOUNDS = { xMin: -2, xMax: 2, yMin: -2, yMax: 2 }
+const BOUNDS = { xMin: -3.5, xMax: 3.5, yMin: -3.5, yMax: 3.5 }
 
 // ---- Coefficient mini panel --------------------------------------------------
 
@@ -24,9 +26,10 @@ interface CoeffPanelProps {
   value: Complex
   color: string
   onChange: (v: Complex) => void
+  children?: React.ReactNode
 }
 
-function CoeffPanel({ label, value, color, onChange }: CoeffPanelProps) {
+function CoeffPanel({ label, value, color, onChange, children }: CoeffPanelProps) {
   const pos: Vec3 = [value[0], value[1], 0]
   const handleDrag = (p: Vec3) => onChange([p[0], p[1]])
 
@@ -35,6 +38,7 @@ function CoeffPanel({ label, value, color, onChange }: CoeffPanelProps) {
       <div className={styles.coeffLabel}>{label}</div>
       <div className={styles.miniCanvas}>
         <ArgandPlane size="mini" showUnitCircle frameloop="always">
+          {children}
           <DraggableHandle
             position={pos}
             onDrag={handleDrag}
@@ -86,9 +90,15 @@ export function ComplexPoly() {
     <div className={styles.body}>
       {/* Left column: three coefficient mini panels */}
       <div className={styles.leftCol}>
-        <CoeffPanel label="a₀ — constant term" value={a0} color={V1} onChange={setA0} />
-        <CoeffPanel label="a₁ — linear term" value={a1} color={V2} onChange={setA1} />
-        <CoeffPanel label="a₂ — quadratic term" value={a2} color={V3} onChange={setA2} />
+        <CoeffPanel label="a₀ — constant term" value={a0} color={V1} onChange={setA0}>
+          <VectorArrow vector={[a0[0], a0[1], 0]} color={V1} showLabel={false} />
+        </CoeffPanel>
+        <CoeffPanel label="a₁ — linear term" value={a1} color={V2} onChange={setA1}>
+          <VectorArrow vector={[a1[0], a1[1], 0]} color={V2} showLabel={false} />
+        </CoeffPanel>
+        <CoeffPanel label="a₂ — quadratic term" value={a2} color={V3} onChange={setA2}>
+          <VectorArrow vector={[a2[0], a2[1], 0]} color={V3} showLabel={false} />
+        </CoeffPanel>
       </div>
 
       {/* Center column: main domain-coloring visualization */}
@@ -110,7 +120,11 @@ export function ComplexPoly() {
         </div>
 
         <div className={styles.mainCanvas}>
-          <Scene dim={displayMode} frameloop="always">
+          <Scene
+            dim={displayMode}
+            frameloop="always"
+            axisLabels={displayMode === '3d' ? ['Re', 'Im', '|p(z)|'] : ['Re', 'Im']}
+          >
             <DomainColoringMesh
               fn={polyFn}
               bounds={BOUNDS}
@@ -118,9 +132,7 @@ export function ComplexPoly() {
               mode={displayMode}
             />
           </Scene>
-          <div className={styles.colorLegend}>
-            Hue = arg(z) &nbsp;·&nbsp; Brightness = |z|
-          </div>
+          <ComplexColorKey />
         </div>
 
         <div className={styles.calloutsArea}>

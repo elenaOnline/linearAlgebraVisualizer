@@ -12,6 +12,7 @@ import { MathText } from '../../ui/MathText'
 import { Callout } from '../../ui/Callout'
 import { useVectorsStore } from './store'
 import { deriveVectorsGeometry } from './geometry'
+import { V1, V2, VP } from '../../styles/colors'
 import styles from './Vectors.module.css'
 
 // ---- helpers ----------------------------------------------------------------
@@ -82,32 +83,32 @@ function SceneContent({
 
   return (
     <>
-      {/* u — orange */}
-      <VectorArrow vector={u3} color="#e67e22" label="u" showLabel={false} />
+      {/* u — vermilion (v1) */}
+      <VectorArrow vector={u3} color={V1} label="u" showLabel={false} />
 
-      {/* v — purple */}
-      <VectorArrow vector={v3} color="#9b59b6" label="v" showLabel={false} />
+      {/* v — prussian (v2) */}
+      <VectorArrow vector={v3} color={V2} label="v" showLabel={false} />
 
-      {/* sum — green */}
+      {/* sum — forest (vp, derived result) */}
       {showSum && (
-        <VectorArrow vector={sum3} color="#2ecc71" label="u+v" showLabel={false} />
+        <VectorArrow vector={sum3} color={VP} label="u+v" showLabel={false} />
       )}
 
       {/* tip-to-tail ghost: v translated so its tail is at tip of u */}
       {showSum && showTipToTail && (
         <group position={tipToTailOffset3}>
-          <VectorArrow vector={v3} color="#9b59b6" opacity={0.35} showLabel={false} />
+          <VectorArrow vector={v3} color={V2} opacity={0.35} showLabel={false} />
         </group>
       )}
 
-      {/* scalar multiple c*v — cyan */}
+      {/* scalar multiple c*v — forest (vp, derived) */}
       {showScalarMult && (
-        <VectorArrow vector={cV3} color="#1abc9c" label="cv" showLabel={false} opacity={0.85} />
+        <VectorArrow vector={cV3} color={VP} label="cv" showLabel={false} opacity={0.85} />
       )}
 
       {/* Draggable handles at tips */}
-      <DraggableHandle position={u3} onDrag={onDragU} color="#e67e22" radius={0.13} dim={dim} />
-      <DraggableHandle position={v3} onDrag={onDragV} color="#9b59b6" radius={0.13} dim={dim} />
+      <DraggableHandle position={u3} onDrag={onDragU} color={V1} radius={0.13} dim={dim} />
+      <DraggableHandle position={v3} onDrag={onDragV} color={V2} radius={0.13} dim={dim} />
 
       <Labels items={labelItems} />
     </>
@@ -154,27 +155,32 @@ export function Vectors() {
   const zeroV = isZero(v3)
 
   return (
-    <div className={styles.layout}>
-      {/* ---- Visualization region ---- */}
-      <div className={styles.vizRegion}>
-        <Scene dim={dim} frameloop="always">
-          <SceneContent
-            geo={geo}
-            showSum={showSum}
-            showTipToTail={showTipToTail}
-            showScalarMult={showScalarMult}
-            onDragU={handleDragU}
-            onDragV={handleDragV}
-            dim={dim}
-            c={c}
-          />
-        </Scene>
-      </div>
+    <div className={styles.body}>
+      <div className={styles.stageCol}>
+        {/* ---- Visualization card ---- */}
+        <div className={styles.stageViz}>
+          <div className={styles.vh}>
+            <em>u</em>, <em>v</em> ∈ ℝ<sup><em>n</em></sup>
+            <span className={styles.grow} />
+          </div>
+          <div className={styles.canvas}>
+            <Scene dim={dim} frameloop="always">
+              <SceneContent
+                geo={geo}
+                showSum={showSum}
+                showTipToTail={showTipToTail}
+                showScalarMult={showScalarMult}
+                onDragU={handleDragU}
+                onDragV={handleDragV}
+                dim={dim}
+                c={c}
+              />
+            </Scene>
+          </div>
+        </div>
 
-      {/* ---- Bottom row: sandbox + explanation ---- */}
-      <div className={styles.bottomRow}>
-        {/* Sandbox */}
-        <div className={styles.sandboxRegion}>
+        {/* ---- Controls card ---- */}
+        <div className={styles.stageControls}>
           <div className={styles.sandboxInner}>
             {/* Dimension toggle */}
             <div className={styles.dimRow}>
@@ -234,10 +240,11 @@ export function Vectors() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Explanation */}
-        <div className={styles.explanationRegion}>
-          <Panel title="What is a vector?">
+      {/* ---- Definition rail ---- */}
+      <aside className={styles.rail}>
+        <Panel eyebrow="Definition" title="What is a vector?">
             <div className={styles.explainInner}>
               <p>
                 A <strong>vector</strong> in Rⁿ is an ordered list of n real numbers, visualized as
@@ -294,8 +301,7 @@ export function Vectors() {
               )}
             </div>
           </Panel>
-        </div>
-      </div>
+      </aside>
     </div>
   )
 }

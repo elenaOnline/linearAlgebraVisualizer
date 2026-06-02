@@ -13,10 +13,10 @@ export function MathText({ tex, display = false }: MathTextProps) {
       return katex.renderToString(tex, {
         displayMode: display,
         throwOnError: false,
-        errorColor: '#e74c3c',
+        errorColor: '#b14233',
       })
     } catch {
-      return `<span style="color:#e74c3c">KaTeX error: ${tex}</span>`
+      return `<span style="color:#b14233">KaTeX error: ${tex}</span>`
     }
   }, [tex, display])
 

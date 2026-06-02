@@ -10,12 +10,13 @@ import { MathText } from '../../ui/MathText'
 import { Callout } from '../../ui/Callout'
 import { useDimensionStore } from './store'
 import { deriveDimensionGeometry } from './geometry'
+import { V1, V2, V3, VP } from '../../styles/colors'
 import styles from './Dimension.module.css'
 
 // ---------------------------------------------------------------------------
 // Color palette for up to 4 vectors
 // ---------------------------------------------------------------------------
-const VECTOR_COLORS = ['#e67e22', '#9b59b6', '#3498db', '#e74c3c']
+const VECTOR_COLORS = [V1, V2, V3, VP]
 
 // ---------------------------------------------------------------------------
 // Scene content (inside Canvas)
@@ -37,7 +38,7 @@ function SceneContent({ geo, vectorEntries, dim, onDrag }: SceneContentProps) {
       {dimension > 0 && (
         <SubspaceMesh
           geometry={spanSubspace}
-          color="var(--color-span, #1abc9c)"
+          color={VP}
           opacity={0.28}
           dim={dim}
         />
@@ -98,23 +99,28 @@ export function Dimension() {
   )
 
   return (
-    <div className={styles.layout}>
-      {/* ---- Visualization region ---- */}
-      <div className={styles.vizRegion}>
-        <Scene dim={dim} frameloop="always">
-          <SceneContent
-            geo={geo}
-            vectorEntries={vectors}
-            dim={dim}
-            onDrag={handleDrag}
-          />
-        </Scene>
-      </div>
+    <div className={styles.body}>
+      <div className={styles.stageCol}>
+        {/* ---- Visualization card ---- */}
+        <div className={styles.stageViz}>
+          <div className={styles.vh}>
+            dim(span&#123;<em>v</em><sub>1</sub>,…,<em>v</em><sub><em>k</em></sub>&#125;) = rank[<em>v</em><sub>1</sub> ⋯ <em>v</em><sub><em>k</em></sub>]
+            <span className={styles.grow} />
+          </div>
+          <div className={styles.canvas}>
+            <Scene dim={dim} frameloop="always">
+              <SceneContent
+                geo={geo}
+                vectorEntries={vectors}
+                dim={dim}
+                onDrag={handleDrag}
+              />
+            </Scene>
+          </div>
+        </div>
 
-      {/* ---- Bottom row: sandbox + explanation ---- */}
-      <div className={styles.bottomRow}>
-        {/* Sandbox */}
-        <div className={styles.sandboxRegion}>
+        {/* ---- Controls card ---- */}
+        <div className={styles.stageControls}>
           <div className={styles.sandboxInner}>
             {/* Space toggle */}
             <div className={styles.dimRow}>
@@ -211,9 +217,11 @@ export function Dimension() {
           </div>
         </div>
 
-        {/* Explanation */}
-        <div className={styles.explanationRegion}>
-          <Panel title="What is dimension?">
+      </div>
+
+      {/* ---- Definition rail ---- */}
+      <aside className={styles.rail}>
+        <Panel eyebrow="Definition" title="What is dimension?">
             <div className={styles.explainInner}>
               <p>
                 <strong>Dimension</strong> tells you how many truly independent directions
@@ -277,8 +285,7 @@ export function Dimension() {
               )}
             </div>
           </Panel>
-        </div>
-      </div>
+      </aside>
     </div>
   )
 }

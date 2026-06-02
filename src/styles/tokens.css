@@ -1,23 +1,50 @@
 :root {
-  /* Colors */
-  --color-axis-x: #e74c3c;
-  --color-axis-y: #2ecc71;
-  --color-axis-z: #3498db;
-  --color-vector-u: #e67e22;
-  --color-vector-v: #9b59b6;
-  --color-span: #1abc9c;
-  --color-nullspace: #e74c3c;
-  --color-basis: #f39c12;
-  --color-grid: #ecf0f1;
-  --color-origin: #ffffff;
-  --color-bg: #1a1a2e;
-  --color-surface: #16213e;
-  --color-surface-2: #0f3460;
-  --color-text: #e0e0e0;
-  --color-text-muted: #a0a0b0;
-  --color-accent: #e94560;
+  /* ── Neutral surface / text / line tokens ───────────────────────────────── */
+  --bg:      #f2f1ef; /* page surface — bone paper                             */
+  --bg-2:    #e7e6e3; /* recessed surface, input bg, code blocks               */
+  --bg-3:    #dad9d5; /* slider track                                           */
+  --panel:   #f8f7f4; /* card, definition panel, viz canvas                    */
+  --panel-2: #ecebe7; /* card header / footer strips                            */
+  --ink:     #1f1f1c; /* primary text, axes                                     */
+  --ink-2:   #46453f; /* body copy, secondary text                              */
+  --ink-3:   #7c7a72; /* labels, meta, crumbs                                   */
+  --ink-4:   #aeaba1; /* placeholder ticks, divider hints                       */
+  --line:    rgba(31, 31, 28, 0.08);  /* card borders, dividers                */
+  --line-2:  rgba(31, 31, 28, 0.14); /* stronger dividers, input borders       */
+  --line-3:  rgba(31, 31, 28, 0.22); /* hover state borders                    */
 
-  /* Spacing */
+  /* ── Vector accent palette — Plate ─────────────────────────────────────── */
+  /* Use for drawing only — never for UI chrome.                               */
+  --v1:      #b14233; /* vermilion — basis 1 / primary vector                  */
+  --v1-wash: rgba(177, 66, 51, 0.11);
+  --v1-edge: rgba(177, 66, 51, 0.40);
+
+  --v2:      #1f4a73; /* prussian — basis 2                                     */
+  --v2-wash: rgba(31, 74, 115, 0.11);
+  --v2-edge: rgba(31, 74, 115, 0.40);
+
+  --v3:      #a07321; /* ochre — basis 3 / non-primary direction                */
+  --v3-wash: rgba(160, 115, 33, 0.12);
+  --v3-edge: rgba(160, 115, 33, 0.40);
+
+  --vp:      #3d5e2b; /* forest — derived result / focus / subspace             */
+  --vp-wash: rgba(61, 94, 43, 0.12);
+  --vp-edge: rgba(61, 94, 43, 0.42);
+
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+  --font-sans: 'Geist', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+  --font-math: 'STIX Two Text', serif; /* italic is the primary style          */
+
+  /* ── Type scale ─────────────────────────────────────────────────────────── */
+  --t-display: 38px; /* display heading                                        */
+  --t-h1:      28px; /* page-level heading                                     */
+  --t-h2:      20px; /* section heading (derived — style guide shows h1/body)  */
+  --t-body:    15px; /* body copy                                               */
+  --t-meta:    13px; /* secondary text, labels (derived — matches component use)*/
+  --t-micro:   11px; /* micro labels, caps                                     */
+
+  /* ── Spacing ────────────────────────────────────────────────────────────── */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -25,19 +52,7 @@
   --space-6: 24px;
   --space-8: 32px;
 
-  /* Typography */
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --font-sans: system-ui, -apple-system, sans-serif;
-  --font-size-sm: 12px;
-  --font-size-base: 14px;
-  --font-size-lg: 18px;
-  --font-size-xl: 24px;
-
-  /* Border radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-
-  /* Shadows */
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  /* ── Border radius ───────────────────────────────────────────────────────── */
+  --radius:    6px;
+  --radius-lg: 10px;
 }

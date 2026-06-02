@@ -3,7 +3,7 @@ import { Scene } from '../../scene/Scene'
 import { VectorArrow } from '../../scene/VectorArrow'
 import { DraggableHandle } from '../../scene/DraggableHandle'
 import { FunctionGraph } from '../../scene/FunctionGraph'
-import { StackingIndicators } from '../../scene/StackingIndicators'
+import { ShadedArea } from '../../scene/ShadedArea'
 import { NumberInput } from '../../ui/NumberInput'
 import { Slider } from '../../ui/Slider'
 import { Panel } from '../../ui/Panel'
@@ -19,11 +19,10 @@ import styles from './PolyScalarMul.module.css'
 // ---- Main component ----------------------------------------------------------
 
 export function PolyScalarMul() {
-  const { deg, p, c, showIndicators, setDeg, setP, setC, setShowIndicators } =
-    usePolyScalarMulStore()
+  const { deg, p, c, setDeg, setP, setC } = usePolyScalarMulStore()
 
   const geo = computePolyScalarMulGeo(deg, p, c)
-  const { pCoeffs, scaledCoeffs, stackingSamples, cIsZero, cIsOne, cIsNegative } = geo
+  const { pCoeffs, scaledCoeffs, pGraph, scaledGraph, cIsZero, cIsOne, cIsNegative } = geo
 
   const handleDragP = (pos: Vec3) => {
     setP([pos[0], pos[1], deg === 'p2' ? pos[2] : 0])
@@ -38,6 +37,10 @@ export function PolyScalarMul() {
 
   const pPos2d: Vec3 = [pCoeffs[0], pCoeffs[1], 0]
   const scaledPos2d: Vec3 = [scaledCoeffs[0], scaledCoeffs[1], 0]
+
+  // When c < 0, the scaled curve is below p(x), so swap lower/upper accordingly
+  const shadeLower = cIsNegative ? scaledGraph : pGraph
+  const shadeUpper = cIsNegative ? pGraph : scaledGraph
 
   return (
     <div className={styles.body}>
@@ -87,19 +90,10 @@ export function PolyScalarMul() {
             </div>
             <div className={styles.canvasWrap}>
               <Scene dim="2d" axisLabels={['x', 'f(x)']} frameloop="always">
-                <FunctionGraph fn={pFn} xMin={-4} xMax={4} color={V1} />
-                <FunctionGraph fn={scaledFn} xMin={-4} xMax={4} color={VP} />
-                {showIndicators && (
-                  <StackingIndicators
-                    samples={stackingSamples.map((s) => ({
-                      x: s.x,
-                      baseY: s.fAtX,
-                      topY: s.scaledAtX,
-                    }))}
-                    colorBottom={V1}
-                    colorTop={VP}
-                  />
-                )}
+                {/* Shaded region between f(x) and c·f(x) shows the scaling effect */}
+                <ShadedArea lower={shadeLower} upper={shadeUpper} color={VP} opacity={0.25} />
+                <FunctionGraph fn={pFn} xMin={-10} xMax={10} color={V1} />
+                <FunctionGraph fn={scaledFn} xMin={-10} xMax={10} color={VP} />
               </Scene>
             </div>
           </div>
@@ -110,14 +104,6 @@ export function PolyScalarMul() {
           <div className={styles.controlsInner}>
             <div className={styles.toggleRow}>
               <PolyDegToggle value={deg} onChange={setDeg} />
-              <label className={styles.toggleLabel}>
-                <input
-                  type="checkbox"
-                  checked={showIndicators}
-                  onChange={(e) => setShowIndicators(e.target.checked)}
-                />
-                Show stacking indicators
-              </label>
             </div>
 
             {/* Scalar c */}

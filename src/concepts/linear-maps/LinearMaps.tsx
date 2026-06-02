@@ -17,6 +17,7 @@ import { Callout } from '../../ui/Callout'
 import { useLinearMapsStore } from './store'
 import { deriveLinearMapsGeometry } from './geometry'
 import type { Vec } from '../../types'
+import { V1, V2, V3, VP } from '../../styles/colors'
 import styles from './LinearMaps.module.css'
 
 // ---- helpers ----------------------------------------------------------------
@@ -36,7 +37,7 @@ interface TransformedGridProps {
   opacity?: number
 }
 
-function TransformedGrid({ gridLines, color = '#e94560', opacity = 0.45 }: TransformedGridProps) {
+function TransformedGrid({ gridLines, color = V1, opacity = 0.30 }: TransformedGridProps) {
   const geometry = useMemo(() => {
     const positions: number[] = []
     for (const [start, end] of gridLines) {
@@ -80,7 +81,7 @@ function DetRegion2D({ corners, isPositive }: DetRegion2DProps) {
     return { geom }
   }, [corners])
 
-  const color = isPositive ? '#2ecc71' : '#e74c3c'
+  const color = isPositive ? VP : V1
 
   return (
     <mesh geometry={geom}>
@@ -125,7 +126,7 @@ function DetRegion3D({ corners }: DetRegion3DProps) {
 
   return (
     <lineSegments geometry={geometry}>
-      <lineBasicMaterial color="#f39c12" opacity={0.6} transparent linewidth={1.5} />
+      <lineBasicMaterial color={V3} opacity={0.6} transparent linewidth={1.5} />
     </lineSegments>
   )
 }
@@ -250,7 +251,7 @@ function SceneContent({
     <>
       {/* Transformed grid */}
       {showTransformedGrid && (
-        <TransformedGrid gridLines={gridLines} color="#e94560" opacity={0.45} />
+        <TransformedGrid gridLines={gridLines} color={V1} opacity={0.30} />
       )}
 
       {/* Determinant region */}
@@ -261,34 +262,34 @@ function SceneContent({
         <DetRegion3D corners={unitShapeCorners} />
       )}
 
-      {/* Column space */}
+      {/* Column space — forest (vp) */}
       {columnSpaceSubspace && (
-        <SubspaceMesh geometry={columnSpaceSubspace} color="#1abc9c" opacity={0.2} dim={dim} />
+        <SubspaceMesh geometry={columnSpaceSubspace} color={VP} opacity={0.18} dim={dim} />
       )}
 
-      {/* Standard basis e1 (faint) */}
-      <VectorArrow vector={[1, 0, 0]} color="#e74c3c" opacity={0.25} showLabel={false} />
-      <VectorArrow vector={[0, 1, 0]} color="#2ecc71" opacity={0.25} showLabel={false} />
+      {/* Standard basis vectors (faint) */}
+      <VectorArrow vector={[1, 0, 0]} color={V1} opacity={0.20} showLabel={false} />
+      <VectorArrow vector={[0, 1, 0]} color={V2} opacity={0.20} showLabel={false} />
       {dim === '3d' && (
-        <VectorArrow vector={[0, 0, 1]} color="#3498db" opacity={0.25} showLabel={false} />
+        <VectorArrow vector={[0, 0, 1]} color={V3} opacity={0.20} showLabel={false} />
       )}
 
       {/* Transformed basis vectors (columns of A) */}
-      <VectorArrow vector={col1} color="#e74c3c" showLabel={false} />
-      <VectorArrow vector={col2} color="#2ecc71" showLabel={false} />
-      {col3 && <VectorArrow vector={col3} color="#3498db" showLabel={false} />}
+      <VectorArrow vector={col1} color={V1} showLabel={false} />
+      <VectorArrow vector={col2} color={V2} showLabel={false} />
+      {col3 && <VectorArrow vector={col3} color={V3} showLabel={false} />}
 
-      {/* Probe vector v (original) */}
-      <VectorArrow vector={v3} color="#f39c12" opacity={0.5} showLabel={false} />
+      {/* Probe vector v (original, faint) */}
+      <VectorArrow vector={v3} color={V3} opacity={0.45} showLabel={false} />
 
-      {/* Transformed probe Av */}
-      <VectorArrow vector={Av3} color="#f39c12" showLabel={false} />
+      {/* Transformed probe Av — ochre (v3) */}
+      <VectorArrow vector={Av3} color={V3} showLabel={false} />
 
       {/* Draggable handle for v */}
       <DraggableHandle
         position={v3}
         onDrag={onDragV}
-        color="#f39c12"
+        color={V3}
         radius={0.13}
         dim={dim}
       />
@@ -330,35 +331,40 @@ export function LinearMaps() {
   const absDetLabel = `|det| = ${fmt4(Math.abs(detA))}`
 
   return (
-    <div className={styles.layout}>
-      {/* ---- Visualization region ---- */}
-      <div className={styles.vizRegion}>
-        <Scene dim={dim} frameloop="always">
-          <SceneContent
-            geo={geo}
-            showTransformedGrid={showTransformedGrid}
-            showDetRegion={showDetRegion}
-            showColumnSpace={showColumnSpace}
-            onDragV={handleDragV}
-            dim={dim}
-          />
-        </Scene>
-
-        {/* Det overlay */}
-        <div className={styles.detOverlay}>
-          <div>
-            <span className={styles.detValue}>{detLabel}</span>
-            {isSingular && <span className={styles.singularBadge}>Singular</span>}
+    <div className={styles.body}>
+      <div className={styles.stageCol}>
+        {/* ---- Visualization card ---- */}
+        <div className={styles.stageViz}>
+          <div className={styles.vh}>
+            <em>T</em>(<em>x</em>) = <em>Ax</em>
+            <span className={styles.grow} />
           </div>
-          <div>{absDetLabel}</div>
-          {detA < -1e-9 && <div style={{ color: '#e74c3c', fontSize: '11px' }}>Orientation reversed</div>}
-        </div>
-      </div>
+          <div className={styles.canvas}>
+            <Scene dim={dim} frameloop="always">
+              <SceneContent
+                geo={geo}
+                showTransformedGrid={showTransformedGrid}
+                showDetRegion={showDetRegion}
+                showColumnSpace={showColumnSpace}
+                onDragV={handleDragV}
+                dim={dim}
+              />
+            </Scene>
 
-      {/* ---- Bottom row: sandbox + explanation ---- */}
-      <div className={styles.bottomRow}>
-        {/* Sandbox */}
-        <div className={styles.sandboxRegion}>
+            {/* Det overlay */}
+            <div className={styles.detOverlay}>
+              <div>
+                <span className={styles.detValue}>{detLabel}</span>
+                {isSingular && <span className={styles.singularBadge}>Singular</span>}
+              </div>
+              <div>{absDetLabel}</div>
+              {detA < -1e-9 && <div style={{ color: V1, fontSize: '11px' }}>Orientation reversed</div>}
+            </div>
+          </div>
+        </div>
+
+        {/* ---- Controls card ---- */}
+        <div className={styles.stageControls}>
           <div className={styles.sandboxInner}>
             {/* Dimension toggle */}
             <div className={styles.dimRow}>
@@ -420,9 +426,11 @@ export function LinearMaps() {
           </div>
         </div>
 
-        {/* Explanation */}
-        <div className={styles.explanationRegion}>
-          <Panel title="Matrices as Linear Maps">
+      </div>
+
+      {/* ---- Definition rail ---- */}
+      <aside className={styles.rail}>
+        <Panel eyebrow="Definition" title="Matrices as Linear Maps">
             <div className={styles.explainInner}>
               <p>
                 A matrix is a machine that stretches, rotates, reflects, and shears space — it maps
@@ -477,8 +485,7 @@ export function LinearMaps() {
               )}
             </div>
           </Panel>
-        </div>
-      </div>
+      </aside>
     </div>
   )
 }

@@ -12,10 +12,12 @@ interface SceneProps {
   children?: ReactNode
   frameloop?: 'always' | 'demand' | 'never'
   className?: string
+  axisLabels?: [string, string] | [string, string, string]
+  showGrid?: boolean
 }
 
 // Reads DragContext to disable OrbitControls while a handle is being dragged.
-function SceneCanvas({ dim, children, frameloop = 'always' }: Omit<SceneProps, 'className'>) {
+function SceneCanvas({ dim, children, frameloop = 'always', axisLabels, showGrid = true }: Omit<SceneProps, 'className'>) {
   const { isDragging } = useDragContext()
   return (
     <Canvas frameloop={frameloop} gl={{ antialias: true }}>
@@ -38,19 +40,19 @@ function SceneCanvas({ dim, children, frameloop = 'always' }: Omit<SceneProps, '
       <ambientLight intensity={0.6} />
       <directionalLight position={[5, 10, 5]} intensity={0.8} />
 
-      <Axes dim={dim} />
-      <Grid dim={dim} />
+      <Axes dim={dim} axisLabels={axisLabels} />
+      {showGrid && <Grid dim={dim} />}
 
       {children}
     </Canvas>
   )
 }
 
-export function Scene({ dim, children, frameloop = 'always', className }: SceneProps) {
+export function Scene({ dim, children, frameloop = 'always', className, axisLabels, showGrid = true }: SceneProps) {
   return (
     <DragProvider>
       <div className={`${styles.sceneContainer} ${className ?? ''}`}>
-        <SceneCanvas dim={dim} frameloop={frameloop}>
+        <SceneCanvas dim={dim} frameloop={frameloop} axisLabels={axisLabels} showGrid={showGrid}>
           {children}
         </SceneCanvas>
       </div>

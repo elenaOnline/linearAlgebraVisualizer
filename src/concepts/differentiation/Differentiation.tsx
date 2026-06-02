@@ -1,8 +1,10 @@
+import { useCallback } from 'react'
 import type { Vec3 } from '../../types'
 import { Scene } from '../../scene/Scene'
 import { VectorArrow } from '../../scene/VectorArrow'
 import { DraggableHandle } from '../../scene/DraggableHandle'
 import { SubspaceMesh } from '../../scene/SubspaceMesh'
+import { FunctionGraph } from '../../scene/FunctionGraph'
 import { NumberInput } from '../../ui/NumberInput'
 import { Panel } from '../../ui/Panel'
 import { MathText } from '../../ui/MathText'
@@ -70,6 +72,12 @@ export function Differentiation() {
     setA1(pos[1])
     setA2(pos[2])
   }
+
+  // Stable function references for FunctionGraph, closed over current coefficients.
+  // useCallback ensures the function identity updates when coefficients change,
+  // triggering FunctionGraph to recompute its sampled points.
+  const fFn = useCallback((x: number) => a0 + a1 * x + a2 * x * x, [a0, a1, a2])
+  const dfFn = useCallback((x: number) => a1 + 2 * a2 * x, [a1, a2])
 
   return (
     <div className={styles.body}>
@@ -140,6 +148,29 @@ export function Differentiation() {
                 Constant polynomials span the kernel of D.
               </Callout>
             )}
+          </div>
+        </div>
+
+        {/* ---- Function graph panel ---- */}
+        <div className={styles.graphPanel}>
+          <div className={styles.panelHeader}>
+            Graph — f(x) and f′(x) over x ∈ [−10, 10]
+          </div>
+          <div className={styles.graphLegend}>
+            <span className={styles.legendItem}>
+              <span className={styles.legendSwatch} style={{ background: V1 }} />
+              f(x) = a₀ + a₁x + a₂x²
+            </span>
+            <span className={styles.legendItem}>
+              <span className={styles.legendSwatch} style={{ background: V2 }} />
+              f′(x) = a₁ + 2a₂x
+            </span>
+          </div>
+          <div className={styles.graphCanvasWrap}>
+            <Scene dim="2d" frameloop="always">
+              <FunctionGraph fn={fFn} xMin={-10} xMax={10} color={V1} lineWidth={2} />
+              <FunctionGraph fn={dfFn} xMin={-10} xMax={10} color={V2} lineWidth={2} />
+            </Scene>
           </div>
         </div>
       </div>

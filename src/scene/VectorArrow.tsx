@@ -36,7 +36,7 @@ function setMaterialProps(
 
 export function VectorArrow({
   vector,
-  color = '#e67e22',
+  color = '#b14233',
   opacity = 1,
   label,
   showLabel = true,
@@ -80,7 +80,7 @@ export function VectorArrow({
             vector[1] * 1.1 + 0.1,
             vector[2] * 1.1 + 0.1,
           ]}
-          style={{ color, fontFamily: 'var(--font-mono)', fontSize: '13px', userSelect: 'none' }}
+          style={{ color, fontFamily: 'var(--font-math)', fontStyle: 'italic', fontSize: '13px', userSelect: 'none' }}
         >
           {label}
         </Html>

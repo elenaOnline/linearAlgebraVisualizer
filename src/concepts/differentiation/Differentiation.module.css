@@ -143,3 +143,43 @@
   content: '→ ';
   color: var(--ink-3);
 }
+
+/* ---- Function graph panel ------------------------------------------------ */
+.graphPanel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.graphLegend {
+  display: flex;
+  gap: var(--space-4);
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--ink-2);
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.legendSwatch {
+  display: inline-block;
+  width: 20px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.graphCanvasWrap {
+  height: 300px;
+}
