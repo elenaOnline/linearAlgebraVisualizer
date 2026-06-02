@@ -1,0 +1,128 @@
+/* poly-space concept page */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+  padding: 18px 24px 22px;
+  overflow-y: auto;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+@media (max-width: 960px) {
+  .body { grid-template-columns: 1fr; }
+}
+
+.stageCol {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+}
+
+.splitPanels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 300px;
+}
+
+.panelCard {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+}
+
+.panelHeader {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--ink-3);
+  flex-shrink: 0;
+}
+
+.canvasWrap {
+  flex: 1;
+  min-height: 240px;
+}
+
+.controls {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px 16px;
+  flex-shrink: 0;
+}
+
+.controlsInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.row {
+  display: flex;
+  gap: var(--space-4);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 120px;
+}
+
+.label {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.rail {
+  min-width: 0;
+}
+
+.explainInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+.explainInner p {
+  margin: 0;
+}
+
+.mathBlock {
+  margin: var(--space-2) 0;
+}
+
+.tryList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tryList li::before {
+  content: '→ ';
+  color: var(--ink-3);
+}

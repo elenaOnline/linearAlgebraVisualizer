@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Style guide — Linear Algebra Seen Right</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app/styles.css">
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<style>
+  /* ============================================================
+     Style guide local styles
+     The page itself follows the same design language it documents.
+     ============================================================ */
+
+  html, body { background: var(--bg); color: var(--ink); }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Vector palette tokens — Plate. Reproduced here so the guide stands alone
+     without depending on consumer files. Move these into app/styles.css to
+     adopt the palette globally. */
+  :root {
+    --v1:      #b14233;
+    --v1-wash: rgba(177,66,51,0.11);
+    --v1-edge: rgba(177,66,51,0.40);
+    --v2:      #1f4a73;
+    --v2-wash: rgba(31,74,115,0.11);
+    --v2-edge: rgba(31,74,115,0.40);
+    --v3:      #a07321;
+    --v3-wash: rgba(160,115,33,0.12);
+    --v3-edge: rgba(160,115,33,0.40);
+    --vp:      #3d5e2b;
+    --vp-wash: rgba(61,94,43,0.12);
+    --vp-edge: rgba(61,94,43,0.42);
+  }
+
+  /* Page chrome */
+  .sg-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 80px 56px 120px;
+  }
+  .sg-cover { margin-bottom: 80px; }
+  .sg-cover .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-3);
+  }
+  .sg-cover h1 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 56px; letter-spacing: -0.03em; line-height: 1.02;
+    margin: 14px 0 18px; color: var(--ink);
+  }
+  .sg-cover .lede {
+    font-family: var(--font-math);
+    font-size: 19px; line-height: 1.55; color: var(--ink-2);
+    max-width: 60ch; margin: 0;
+  }
+  .sg-cover .meta-row {
+    display: flex; flex-wrap: wrap; gap: 22px;
+    margin-top: 28px;
+    font-family: var(--font-mono); font-size: 12px;
+    color: var(--ink-3); letter-spacing: 0.02em;
+  }
+  .sg-cover .meta-row .k { color: var(--ink-3); }
+  .sg-cover .meta-row .v { color: var(--ink); margin-left: 6px; }
+
+  /* Table of contents */
+  .sg-toc {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+    margin-top: 36px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .sg-toc a {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .sg-toc a:last-child, .sg-toc a:nth-last-child(2) { border-bottom: none; }
+  .sg-toc a:nth-child(odd) { padding-right: 24px; }
+  .sg-toc a:nth-child(even) { padding-left: 24px; border-left: 1px solid var(--line); }
+  .sg-toc .n {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.06em; color: var(--ink-3);
+    width: 28px; flex-shrink: 0;
+  }
+  .sg-toc .l {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 15px; color: var(--ink); letter-spacing: -0.01em;
+  }
+  .sg-toc .d {
+    font-family: var(--font-math);
+    font-size: 13px; color: var(--ink-3);
+    margin-left: auto;
+  }
+
+  /* Sections */
+  .sg-section { margin: 72px 0; scroll-margin-top: 20px; }
+  .sg-section:first-of-type { margin-top: 0; }
+  .sg-section > header {
+    display: flex; flex-direction: column; gap: 8px;
+    padding-bottom: 22px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .sg-section > header .num {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .sg-section > header h2 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 30px; letter-spacing: -0.025em; line-height: 1.1;
+    margin: 4px 0 0; color: var(--ink);
+  }
+  .sg-section > header p {
+    font-family: var(--font-math); font-size: 15.5px;
+    line-height: 1.55; color: var(--ink-2);
+    max-width: 64ch; margin: 8px 0 0;
+  }
+
+  /* Sub-headings inside a section */
+  .sg-sub {
+    margin: 36px 0 14px;
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  .sg-sub h3 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 17px; letter-spacing: -0.015em;
+    color: var(--ink); margin: 0;
+  }
+  .sg-sub .tag {
+    font-family: var(--font-mono); font-size: 10.5px;
+    color: var(--ink-3); letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Notes (flex / when in doubt) */
+  .sg-note {
+    font-family: var(--font-math);
+    font-size: 14px; line-height: 1.55;
+    color: var(--ink-2);
+    padding: 14px 18px 14px 16px;
+    border-left: 2px solid var(--ink-4);
+    background: var(--bg-2);
+    border-radius: 0 4px 4px 0;
+    margin: 18px 0;
+  }
+  .sg-note strong {
+    font-family: var(--font-sans); font-weight: 500;
+    font-style: normal;
+  }
+
+  /* "Stage" — the live preview frame */
+  .sg-stage {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    margin: 18px 0;
+    position: relative;
+  }
+  .sg-stage.is-roomy { padding: 36px; }
+  .sg-stage .stage-tag {
+    position: absolute; top: 12px; right: 14px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink-4);
+  }
+  .sg-stage.is-paper { background: var(--bg); }
+
+  /* Token list */
+  .tok-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin-top: 14px;
+  }
+  .tok-table th, .tok-table td {
+    text-align: left;
+    padding: 7px 14px 7px 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: middle;
+  }
+  .tok-table th {
+    font-weight: 500;
+    color: var(--ink-3);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-bottom: 9px;
+  }
+  .tok-table td.name { color: var(--ink); }
+  .tok-table td.val  { color: var(--ink-2); }
+  .tok-table td.note { color: var(--ink-3); font-family: var(--font-math); font-size: 13px; }
+  .tok-chip {
+    display: inline-block; width: 14px; height: 14px;
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1px rgba(22,22,20,0.10);
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  /* —— Color swatch grids —— */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+  .pal-cell {
+    display: flex; flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+  .pal-cell .chip {
+    height: 78px;
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 0 1px rgba(22,22,20,0.10);
+  }
+  .pal-cell .role {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .pal-cell .hex {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+  }
+
+  /* Vector accent palette block */
+  .v-pal {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .v-pal .v-card {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .v-pal .row {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .v-pal .solid {
+    width: 44px; height: 44px; border-radius: 8px;
+    box-shadow: inset 0 0 0 1px rgba(22,22,20,0.10);
+  }
+  .v-pal .wash {
+    width: 16px; height: 44px; border-radius: 4px;
+    border: 1px solid var(--line-2);
+  }
+  .v-pal .role {
+    font-family: var(--font-math); font-style: italic;
+    font-size: 19px; color: var(--ink); line-height: 1;
+  }
+  .v-pal .role sub { font-size: 11px; font-style: italic; }
+  .v-pal .label {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); margin-top: 2px;
+  }
+  .v-pal .hex {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink-2);
+  }
+  .v-pal .desc {
+    font-family: var(--font-math); font-size: 12.5px;
+    color: var(--ink-3); line-height: 1.4;
+  }
+
+  /* —— Type specimens —— */
+  .typespec {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 28px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .typespec:last-of-type { border-bottom: none; }
+  .typespec .meta {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .typespec .family {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 16px; color: var(--ink); letter-spacing: -0.01em;
+  }
+  .typespec .usage {
+    font-family: var(--font-mono); font-size: 11px;
+    color: var(--ink-3); letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .typespec .pairs {
+    font-family: var(--font-mono); font-size: 11.5px;
+    color: var(--ink-2); margin-top: 6px;
+    line-height: 1.6;
+  }
+  .typespec .sample-stack {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .typespec .display    { font-size: 38px; line-height: 1.05; letter-spacing: -0.025em; }
+  .typespec .h1         { font-size: 28px; line-height: 1.1;  letter-spacing: -0.02em; }
+  .typespec .body       { font-size: 15px; line-height: 1.5; }
+  .typespec .micro      { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+  .typespec.geist *     { font-family: var(--font-sans); }
+  .typespec.mono *      { font-family: var(--font-mono); }
+  .typespec.math *      { font-family: var(--font-math); font-style: italic; }
+  .typespec.math .body  { font-style: normal; } /* roman for body math */
+  .typespec.math .display { font-style: italic; }
+
+  .scale-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+  }
+  .scale-table td {
+    border-bottom: 1px solid var(--line);
+    padding: 12px 0;
+    vertical-align: baseline;
+  }
+  .scale-table td:first-child {
+    width: 160px;
+    font-family: var(--font-mono); font-size: 11.5px;
+    color: var(--ink-3); letter-spacing: 0.02em;
+  }
+  .scale-table td:last-child {
+    color: var(--ink);
+  }
+
+  /* —— Label specimens —— */
+  .lbl-eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .lbl-math {
+    font-family: var(--font-math); font-style: italic;
+    font-size: 18px; color: var(--ink);
+  }
+  .lbl-math .sub { font-style: italic; font-size: 12px; }
+  .lbl-math .ind { font-family: var(--font-mono); font-style: normal; font-size: 11px; }
+
+  /* —— Slider control replica —— */
+  .sg-controls {
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .ctl-row {
+    display: grid;
+    grid-template-columns: 86px 1fr 1fr;
+    align-items: center;
+    gap: 18px;
+  }
+  .ctl-name {
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .ctl-name .nm {
+    font-family: var(--font-math); font-style: italic;
+    font-size: 15px; color: var(--ink);
+  }
+  .ctl-name .swatch {
+    width: 9px; height: 9px; border-radius: 50%;
+    display: inline-block;
+    box-shadow: inset 0 0 0 1px rgba(22,22,20,0.18);
+  }
+  .ctl-axis {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-math); font-style: italic;
+    color: var(--ink-3); font-size: 12.5px;
+  }
+  .ctl-axis .lbl { width: 10px; }
+  .num-input {
+    width: 56px;
+    padding: 4px 8px;
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12.5px;
+    color: var(--ink);
+    text-align: right;
+  }
+  .num-track {
+    flex: 1;
+    height: 4px; border-radius: 999px;
+    background: var(--bg-3);
+    position: relative;
+  }
+  .num-track .fill {
+    position: absolute; top: 0; bottom: 0; left: 0;
+    background: var(--ink);
+    border-radius: 999px;
+  }
+  .num-track .knob {
+    position: absolute; top: 50%;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--panel); border: 1.5px solid var(--ink);
+    transform: translate(-50%, -50%);
+  }
+
+  /* —— Dimension toggle replica —— */
+  .dim-toggle {
+    display: inline-flex; padding: 2px;
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 7px;
+    flex-shrink: 0;
+  }
+  .dim-toggle button {
+    padding: 4px 14px; border-radius: 5px;
+    font-family: var(--font-math); font-style: italic;
+    font-size: 13.5px; color: var(--ink-2);
+    background: transparent; border: none; cursor: pointer;
+  }
+  .dim-toggle button.is-on {
+    background: var(--panel); color: var(--ink);
+    box-shadow: 0 1px 0 var(--line-2), 0 1px 3px rgba(31,31,28,0.04);
+  }
+  .dim-toggle button sup { font-style: normal; font-family: var(--font-mono); font-size: 10px; margin-left: 1px; }
+
+  /* —— Gallery anatomy —— */
+  .anat-gallery {
+    background: var(--bg);
+    border-radius: var(--radius-lg);
+    padding: 36px 36px 24px;
+    border: 1px solid var(--line);
+  }
+  .anat-gallery h1 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 34px; letter-spacing: -0.025em;
+    margin: 8px 0 10px; line-height: 1.1; color: var(--ink);
+  }
+  .anat-gallery .eyebrow {
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.10em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .anat-gallery .sub {
+    color: var(--ink-2); font-size: 15px; line-height: 1.6;
+    max-width: 64ch; margin: 0 0 24px;
+    font-family: var(--font-math);
+  }
+
+  .anat-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .anat-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .anat-card .preview {
+    height: 130px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: 14px;
+  }
+  .anat-card .body {
+    padding: 14px 16px 16px;
+    display: flex; flex-direction: column;
+    gap: 8px; flex: 1;
+  }
+  .anat-card .title {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 17px; letter-spacing: -0.015em;
+    color: var(--ink); line-height: 1.15;
+  }
+  .anat-card .tease {
+    font-family: var(--font-math); font-size: 13px;
+    color: var(--ink-2); line-height: 1.45;
+    margin: 0;
+  }
+  .anat-card .foot {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+  .dim-row { display: flex; gap: 6px; }
+  .dim-chip {
+    font-family: var(--font-math);
+    font-style: italic; font-size: 11.5px;
+    color: var(--ink-2);
+    background: var(--bg-2);
+    border: 1px solid var(--line-2);
+    padding: 1px 7px 2px;
+    border-radius: 4px;
+  }
+  .dim-chip sup { font-style: normal; font-family: var(--font-mono); font-size: 9px; margin-left: 1px; }
+
+  /* Annotation callout overlay (gallery/concept anatomy) */
+  .annot-layer {
+    position: relative;
+  }
+  .annot {
+    position: absolute;
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-mono); font-size: 10.5px;
+    letter-spacing: 0.04em; color: var(--ink-3);
+    pointer-events: none;
+  }
+  .annot .num {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    display: grid; place-items: center;
+    font-family: var(--font-sans); font-size: 10px; font-weight: 500;
+  }
+  .annot-list {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .annot-list .item {
+    display: flex; align-items: baseline; gap: 12px;
+    font-family: var(--font-math);
+    font-size: 14px; color: var(--ink-2);
+    line-height: 1.45;
+  }
+  .annot-list .item .num {
+    flex-shrink: 0;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--ink); color: var(--bg);
+    display: grid; place-items: center;
+    font-family: var(--font-sans); font-size: 10px; font-weight: 500;
+    align-self: flex-start;
+    transform: translateY(2px);
+  }
+  .annot-list .item .term {
+    font-family: var(--font-sans); font-weight: 500;
+    color: var(--ink); font-size: 13.5px;
+    font-style: normal;
+  }
+  .annot-list .item .term::after {
+    content: " — ";
+    color: var(--ink-3);
+  }
+
+  /* —— Concept page anatomy —— */
+  .anat-cp {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .cp-top {
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+  }
+  .cp-top .back {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12.5px; color: var(--ink-3);
+    padding: 5px 10px 5px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--line-2);
+    background: var(--panel);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cp-top .crumb {
+    font-family: var(--font-mono);
+    font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cp-top h1 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 22px; letter-spacing: -0.02em;
+    margin: 0; color: var(--ink); line-height: 1;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cp-top .spacer { flex: 1; min-width: 16px; }
+
+  .cp-body {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 18px;
+    padding: 18px 24px 22px;
+  }
+  .cp-stage-col {
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .stage-viz {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .stage-viz .vh {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel-2);
+    font-family: var(--font-math); font-style: italic;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .stage-viz .vh .grow { flex: 1; }
+  .stage-viz .vh .ico {
+    width: 24px; height: 24px;
+    display: grid; place-items: center;
+    color: var(--ink-3); border-radius: 4px;
+    font-size: 13px;
+    background: transparent; border: none;
+  }
+  .stage-viz .canvas {
+    background: var(--panel);
+    padding: 10px;
+    min-height: 240px;
+    flex: 1;
+  }
+  .stage-controls {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px 16px;
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .panel-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+  }
+  .panel-card .h {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .panel-card h3 {
+    font-family: var(--font-sans); font-weight: 500;
+    font-size: 17px; letter-spacing: -0.015em;
+    margin: 0 0 10px; color: var(--ink);
+  }
+  .panel-card p {
+    font-family: var(--font-math);
+    font-size: 14.5px; line-height: 1.55;
+    color: var(--ink); margin: 0 0 12px;
+  }
+  .panel-card .stmt {
+    background: var(--bg-2);
+    border-radius: 5px;
+    padding: 12px 14px;
+    font-family: var(--font-math);
+    font-size: 14px; line-height: 1.4;
+    color: var(--ink);
+    text-align: center;
+    margin-top: 4px;
+  }
+  .panel-card .cite {
+    font-family: var(--font-mono);
+    font-size: 11px; color: var(--ink-3);
+    letter-spacing: 0.02em;
+    margin-top: 12px;
+  }
+
+  /* —— Viz SVG (shared) —— */
+  .viz-svg { width: 100%; height: 100%; display: block; }
+  .viz-svg .grid-fine { stroke: var(--line); stroke-width: 0.4; fill: none; }
+  .viz-svg .grid-major { stroke: var(--line-2); stroke-width: 0.6; fill: none; }
+  .viz-svg .axis { stroke: var(--ink-3); stroke-width: 1; }
+  .viz-svg .tick-label { font-family: var(--font-mono); font-size: 9px; fill: var(--ink-4); }
+  .viz-svg .span-strip-1 { fill: var(--v1-wash); stroke: var(--v1-edge); stroke-width: 0.6; }
+  .viz-svg .span-strip-2 { fill: var(--v2-wash); stroke: var(--v2-edge); stroke-width: 0.6; }
+  .viz-svg .vec-arrow { stroke-width: 2.2; fill: none; stroke-linecap: round; }
+  .viz-svg .vec-arrow.b1 { stroke: var(--v1); }
+  .viz-svg .vec-arrow.b2 { stroke: var(--v2); }
+  .viz-svg .vec-arrow.p  { stroke: var(--vp); stroke-dasharray: 5 3; stroke-width: 1.9; }
+  .viz-svg .tip { font-family: var(--font-math); font-style: italic; font-size: 13px; }
+  .viz-svg .tip.t1 { fill: var(--v1); }
+  .viz-svg .tip.t2 { fill: var(--v2); }
+  .viz-svg .tip.tp { fill: var(--vp); }
+  .viz-svg .tip.sub { font-size: 9px; font-style: normal; font-family: var(--font-mono); }
+  .viz-svg .proj-p { stroke: var(--vp-edge); stroke-width: 0.8; fill: none; stroke-dasharray: 2 2.4; }
+
+  /* mini viz for cards in gallery anatomy */
+  .mini { display: block; width: 100%; height: 100%; }
+  .mini .axis { stroke: var(--ink-4); stroke-width: 0.6; }
+  .mini .vec   { stroke: var(--v1); stroke-width: 1.5; fill: none; }
+  .mini .vec-2 { stroke: var(--v2); stroke-width: 1.5; fill: none; }
+  .mini .vec-p { stroke: var(--vp); stroke-width: 1.4; fill: none; stroke-dasharray: 4 2.4; }
+  .mini .dot   { fill: var(--v1); }
+  .mini .dot-2 { fill: var(--v2); }
+  .mini .dot-p { fill: var(--vp); }
+  .mini .label { font-family: var(--font-math); font-style: italic; font-size: 9px; }
+  .mini .label.l1 { fill: var(--v1); }
+  .mini .label.l2 { fill: var(--v2); }
+  .mini .label.lp { fill: var(--vp); }
+  .mini .ribbon { fill: var(--v1-wash); stroke: var(--v1-edge); stroke-width: 0.6; }
+
+  /* Code snippets */
+  pre.snip {
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-family: var(--font-mono);
+    font-size: 11.5px; line-height: 1.55;
+    color: var(--ink);
+    overflow-x: auto;
+    margin: 12px 0 0;
+    white-space: pre;
+  }
+  pre.snip .c { color: var(--ink-3); }
+  pre.snip .k { color: var(--v2); }
+  pre.snip .v { color: var(--v1); }
+
+</style>
+</head>
+<body>
+
+<template id="__bundler_thumbnail" data-bg-color="#f2f1ef">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <!-- bone paper background already supplied by data-bg-color -->
+    <g transform="translate(600 400)">
+      <!-- faint axes -->
+      <line x1="-360" y1="0" x2="360" y2="0" stroke="#7c7a72" stroke-width="3" opacity="0.5" />
+      <line x1="0" y1="-260" x2="0" y2="260" stroke="#7c7a72" stroke-width="3" opacity="0.5" />
+      <!-- span strips (washes) -->
+      <rect x="-360" y="-28" width="720" height="56" fill="#b14233" opacity="0.10" />
+      <rect x="-28" y="-260" width="56" height="520" fill="#1f4a73" opacity="0.10" />
+      <!-- b1 vermilion -->
+      <line x1="0" y1="0" x2="220" y2="0" stroke="#b14233" stroke-width="14" stroke-linecap="round" />
+      <polygon points="220,0 195,-18 195,18" fill="#b14233" />
+      <!-- b2 prussian -->
+      <line x1="0" y1="0" x2="0" y2="-220" stroke="#1f4a73" stroke-width="14" stroke-linecap="round" />
+      <polygon points="0,-220 -18,-195 18,-195" fill="#1f4a73" />
+      <!-- p forest, dashed -->
+      <line x1="0" y1="0" x2="320" y2="-200" stroke="#3d5e2b" stroke-width="11" stroke-linecap="round" stroke-dasharray="22 14" />
+      <circle cx="320" cy="-200" r="18" fill="#3d5e2b" />
+    </g>
+  </svg>
+</template>
+
+<div id="root"></div>
+
+<script type="text/babel" data-presets="env,react">
+  const TOC = [
+    { n: '01', l: 'Foundations · Color',     d: 'neutrals, vector accents' },
+    { n: '02', l: 'Foundations · Type',      d: 'Geist, Geist Mono, STIX Two Text' },
+    { n: '03', l: 'Labels',                   d: 'eyebrows, math, micro-copy' },
+    { n: '04', l: 'Sliders & controls',       d: 'numeric + track + knob' },
+    { n: '05', l: 'Dimension toggle',         d: 'R² / R³ segmented' },
+    { n: '06', l: 'Gallery',                  d: 'title hierarchy, card anatomy' },
+    { n: '07', l: 'Concept page · Header',    d: 'back, crumb, title, toggle' },
+    { n: '08', l: 'Concept page · Body',      d: 'viz · controls · definition' },
+  ];
+
+  function Cover() {
+    return (
+      <header className="sg-cover">
+        <div className="eyebrow">Style guide · v0.1</div>
+        <h1>Linear Algebra Seen Right</h1>
+        <p className="lede">
+          A working reference for the look and feel of the visualizer — neutrals, accents,
+          type, labels, the small set of controls used inside the app, and the page-level
+          layouts that frame them. Treat these as <em>conventions in use</em>, not rules:
+          where the prototype evolves, the guide follows.
+        </p>
+        <div className="meta-row">
+          <span><span className="k">surface</span><span className="v">bone paper</span></span>
+          <span><span className="k">accents</span><span className="v">Plate</span></span>
+          <span><span className="k">type</span><span className="v">Geist · Geist Mono · STIX Two Text</span></span>
+          <span><span className="k">depends on</span><span className="v">app/styles.css</span></span>
+        </div>
+
+        <nav className="sg-toc">
+          {TOC.map(item => (
+            <a key={item.n} href={"#s-" + item.n}>
+              <span className="n">{item.n}</span>
+              <span className="l">{item.l}</span>
+              <span className="d">{item.d}</span>
+            </a>
+          ))}
+        </nav>
+      </header>
+    );
+  }
+
+  // === 01 · COLOR ============================================================
+  const NEUTRALS = [
+    { tok: '--bg',     hex: '#f2f1ef', note: 'page surface (bone paper)' },
+    { tok: '--bg-2',   hex: '#e7e6e3', note: 'recessed surface, input bg, code blocks' },
+    { tok: '--bg-3',   hex: '#dad9d5', note: 'slider track' },
+    { tok: '--panel',  hex: '#f8f7f4', note: 'card, definition panel, viz canvas' },
+    { tok: '--panel-2',hex: '#ecebe7', note: 'card header / footer' },
+    { tok: '--ink',    hex: '#1f1f1c', note: 'primary text, axes when colored is too loud' },
+    { tok: '--ink-2',  hex: '#46453f', note: 'body copy, secondary text' },
+    { tok: '--ink-3',  hex: '#7c7a72', note: 'labels, meta, crumbs' },
+    { tok: '--ink-4',  hex: '#aeaba1', note: 'placeholder ticks, divider hints' },
+    { tok: '--line',   hex: '8% ink',  note: 'card borders, dividers' },
+    { tok: '--line-2', hex: '14% ink', note: 'stronger dividers, input borders' },
+    { tok: '--line-3', hex: '22% ink', note: 'hover state borders' },
+  ];
+
+  function ColorSection() {
+    return (
+      <section className="sg-section" id="s-01">
+        <header>
+          <span className="num">01 · Foundations</span>
+          <h2>Color</h2>
+          <p>
+            A near-monochrome bone-paper surface carries everything; color is reserved for
+            <em> drawing</em> — vectors, span fills, derived points. The neutral scale and
+            the vector accents are the two systems you mix.
+          </p>
+        </header>
+
+        <div className="sg-sub"><h3>Neutrals — bone palette</h3><span className="tag">surface · text · lines</span></div>
+        <div className="palette-grid">
+          {NEUTRALS.slice(0, 6).map(n => (
+            <div key={n.tok} className="pal-cell">
+              <div className="chip" style={{ background: `var(${n.tok})` }} />
+              <div className="role">{n.tok}</div>
+              <div className="hex">{n.hex}</div>
+            </div>
+          ))}
+        </div>
+        <div className="palette-grid" style={{ marginTop: 10 }}>
+          {NEUTRALS.slice(6).map(n => (
+            <div key={n.tok} className="pal-cell">
+              <div className="chip" style={{ background: `var(${n.tok})` }} />
+              <div className="role">{n.tok}</div>
+              <div className="hex">{n.hex}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="sg-sub"><h3>Vector accents — Plate</h3><span className="tag">drawing only</span></div>
+        <p className="sg-note">
+          <strong>Roles, not specific variables.</strong> Each accent slots into a job —
+          first basis vector, second, third, and a derived "result / focus" point.
+          Reach for the slot that matches what you're drawing; if a viz only has one
+          vector, use <code>--v1</code>. Each accent has a solid (line/arrow), a wash
+          (~10–14% fill for span regions), and an edge (~40% outline).
+        </p>
+        <div className="v-pal">
+          {[
+            { id:'v1', name:'b<sub>1</sub>', solid:'#b14233', label:'basis 1 · vermilion',  desc:'Default first vector. Warmest, draws the eye first.' },
+            { id:'v2', name:'b<sub>2</sub>', solid:'#1f4a73', label:'basis 2 · prussian',   desc:'Default second vector. Cool counterweight to v1.' },
+            { id:'v3', name:'b<sub>3</sub>', solid:'#a07321', label:'basis 3 · ochre',      desc:'Used when a third basis vector, or a non-primary direction, needs its own identity.' },
+            { id:'vp', name:'p',             solid:'#3d5e2b', label:'result · forest',      desc:'Derived points, focus highlights, "the answer." Stylistically dashed by default.' },
+          ].map(v => (
+            <div className="v-card" key={v.id}>
+              <div className="row">
+                <div className="solid" style={{ background: v.solid }} />
+                <div className="wash"  style={{ background: `var(--${v.id}-wash)` }} />
+                <div>
+                  <div className="role" dangerouslySetInnerHTML={{ __html: v.name }} />
+                  <div className="label">{v.label}</div>
+                </div>
+              </div>
+              <div className="hex">{v.solid.toUpperCase()}</div>
+              <div className="desc">{v.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        <pre className="snip">
+<span className="c">/* drop into app/styles.css */</span>
+<span className="k">:root</span> {'{'}
+  <span className="k">--v1</span>:      <span className="v">#b14233</span>;
+  <span className="k">--v1-wash</span>: <span className="v">rgba(177,66,51,0.11)</span>;
+  <span className="k">--v1-edge</span>: <span className="v">rgba(177,66,51,0.40)</span>;
+  <span className="k">--v2</span>:      <span className="v">#1f4a73</span>;
+  <span className="k">--v2-wash</span>: <span className="v">rgba(31,74,115,0.11)</span>;
+  <span className="k">--v2-edge</span>: <span className="v">rgba(31,74,115,0.40)</span>;
+  <span className="k">--v3</span>:      <span className="v">#a07321</span>;
+  <span className="k">--v3-wash</span>: <span className="v">rgba(160,115,33,0.12)</span>;
+  <span className="k">--v3-edge</span>: <span className="v">rgba(160,115,33,0.40)</span>;
+  <span className="k">--vp</span>:      <span className="v">#3d5e2b</span>;
+  <span className="k">--vp-wash</span>: <span className="v">rgba(61,94,43,0.12)</span>;
+  <span className="k">--vp-edge</span>: <span className="v">rgba(61,94,43,0.42)</span>;
+{'}'}</pre>
+      </section>
+    );
+  }
+
+  // === 02 · TYPE =============================================================
+  function TypeSection() {
+    return (
+      <section className="sg-section" id="s-02">
+        <header>
+          <span className="num">02 · Foundations</span>
+          <h2>Type</h2>
+          <p>
+            Three families, each with a clear job. Sans for UI structure, mono for
+            labels and meta, serif italic for variables and any text where the math
+            should feel like math.
+          </p>
+        </header>
+
+        <div className="typespec geist">
+          <div className="meta">
+            <span className="family">Geist</span>
+            <span className="usage">ui · titles</span>
+            <span className="pairs">
+              weights · 400, 500<br />
+              tracking · −0.025em at display sizes, −0.015em at headings, 0 at body<br />
+              token · <span style={{color:'var(--ink)'}}>--font-sans</span>
+            </span>
+          </div>
+          <div className="sample-stack">
+            <div className="display" style={{ fontWeight: 500 }}>Concept page heading</div>
+            <div className="h1" style={{ fontWeight: 500 }}>Section · 17–28 px</div>
+            <div className="body">
+              Body copy at 14–15 px. Geist runs the chrome of the app — page titles, card
+              titles, panel headers, button labels.
+            </div>
+          </div>
+        </div>
+
+        <div className="typespec mono">
+          <div className="meta">
+            <span className="family">Geist Mono</span>
+            <span className="usage">labels · numeric</span>
+            <span className="pairs">
+              weights · 400, 500<br />
+              tracking · +0.10em uppercase, +0.02–0.06em mixed-case<br />
+              token · <span style={{color:'var(--ink)'}}>--font-mono</span>
+            </span>
+          </div>
+          <div className="sample-stack">
+            <div className="micro" style={{ fontWeight: 500, color: 'var(--ink-3)' }}>EYEBROW · MICRO LABEL</div>
+            <div className="body" style={{ fontVariantNumeric:'tabular-nums' }}>
+              p = (2.000, 1.000) &nbsp; · &nbsp; ⌘K
+            </div>
+            <div className="body" style={{ color: 'var(--ink-3)' }}>
+              Used for: eyebrows, breadcrumbs, numeric readouts, keyboard shortcuts,
+              status footers. Always tabular-nums when displaying numbers.
+            </div>
+          </div>
+        </div>
+
+        <div className="typespec math">
+          <div className="meta">
+            <span className="family">STIX Two Text · italic</span>
+            <span className="usage">variables · math</span>
+            <span className="pairs">
+              weights · 400, 500 · italic primary<br />
+              roman fallback for body math passages<br />
+              token · <span style={{color:'var(--ink)'}}>--font-math</span>
+            </span>
+          </div>
+          <div className="sample-stack">
+            <div className="display">b<sub style={{fontSize:'0.55em'}}>1</sub>, b<sub style={{fontSize:'0.55em'}}>2</sub> ∈ ℝ<sup style={{fontSize:'0.55em', fontStyle:'normal', fontFamily:'var(--font-mono)'}}>n</sup></div>
+            <div className="h1">p = α b<sub style={{fontSize:'0.55em'}}>1</sub> + β b<sub style={{fontSize:'0.55em'}}>2</sub></div>
+            <div className="body">
+              The italic carries any single-letter variable. Reach for STIX whenever a
+              piece of text is <em>math</em> — definition bodies, formal statements,
+              and the variable-name labels next to controls.
+            </div>
+          </div>
+        </div>
+
+        <div className="sg-sub"><h3>Default type scale</h3><span className="tag">--t-* tokens</span></div>
+        <table className="scale-table">
+          <tbody>
+            <tr><td>--t-display · 34 px</td><td><span style={{fontFamily:'var(--font-sans)', fontSize:34, fontWeight:500, letterSpacing:'-0.025em'}}>Display heading</span></td></tr>
+            <tr><td>--t-h1 · 24 px</td><td><span style={{fontFamily:'var(--font-sans)', fontSize:24, fontWeight:500, letterSpacing:'-0.02em'}}>Page heading</span></td></tr>
+            <tr><td>--t-h2 · 18 px</td><td><span style={{fontFamily:'var(--font-sans)', fontSize:18, fontWeight:500, letterSpacing:'-0.015em'}}>Section heading</span></td></tr>
+            <tr><td>--t-body · 14.5 px</td><td><span style={{fontFamily:'var(--font-math)', fontSize:14.5}}>Body & math copy</span></td></tr>
+            <tr><td>--t-meta · 12.5 px</td><td><span style={{fontFamily:'var(--font-mono)', fontSize:12.5, color:'var(--ink-3)'}}>Meta, secondary labels</span></td></tr>
+            <tr><td>--t-micro · 11 px</td><td><span style={{fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'0.10em', textTransform:'uppercase', color:'var(--ink-3)'}}>EYEBROW · MICRO</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+    );
+  }
+
+  // === 03 · LABELS ===========================================================
+  function LabelsSection() {
+    return (
+      <section className="sg-section" id="s-03">
+        <header>
+          <span className="num">03 · Foundations</span>
+          <h2>Labels &amp; micro-typography</h2>
+          <p>
+            A small vocabulary of label styles repeats throughout the app. Use them to
+            mark hierarchy without resorting to color or weight changes that would
+            compete with the vector palette.
+          </p>
+        </header>
+
+        <div className="sg-sub"><h3>Eyebrow</h3><span className="tag">Geist Mono · 11 px · +0.10em · UPPERCASE</span></div>
+        <div className="sg-stage">
+          <span className="stage-tag">live</span>
+          <div className="lbl-eyebrow">Eyebrow · subtle context above a title</div>
+        </div>
+        <div className="sg-note">
+          Sits one short line above a heading. Carries category, version, or a phase
+          label — anything you want present but not loud. Always in
+          <code>--ink-3</code>; never colored.
+        </div>
+
+        <div className="sg-sub"><h3>Variable label</h3><span className="tag">STIX Two Text · italic</span></div>
+        <div className="sg-stage" style={{ display:'flex', gap: 26, alignItems:'baseline' }}>
+          <span className="stage-tag">live</span>
+          <span className="lbl-math">b<span className="sub" style={{verticalAlign:'sub'}}>1</span></span>
+          <span className="lbl-math">v<span className="sub" style={{verticalAlign:'sub'}}>k</span></span>
+          <span className="lbl-math" style={{ color:'var(--vp)' }}>p</span>
+          <span className="lbl-math">α<span className="ind" style={{verticalAlign:'sub'}}>1</span> b<span className="sub" style={{verticalAlign:'sub'}}>1</span> + α<span className="ind" style={{verticalAlign:'sub'}}>2</span> b<span className="sub" style={{verticalAlign:'sub'}}>2</span></span>
+        </div>
+        <div className="sg-note">
+          Variables borrow their hue from the vector they refer to (<em>b<sub>1</sub></em>{' '}
+          vermilion, <em>b<sub>2</sub></em> prussian, <em>p</em> forest). Plain variables
+          stay in <code>--ink</code>. Subscripts in italic stay STIX; index subscripts
+          treated as <em>numbers</em> can drop to mono.
+        </div>
+
+        <div className="sg-sub"><h3>Inline math in body copy</h3><span className="tag">italic within sans</span></div>
+        <div className="sg-stage" style={{ fontFamily:'var(--font-sans)', fontSize:15, lineHeight:1.55, color:'var(--ink)' }}>
+          <span className="stage-tag">live</span>
+          A basis <em style={{ fontFamily:'var(--font-math)' }}>𝓑 = {'{'} b<sub>1</sub>, …, b<sub>n</sub> {'}'}</em>{' '}
+          gives every vector <em style={{ fontFamily:'var(--font-math)' }}>p ∈ ℝ<sup style={{fontFamily:'var(--font-mono)', fontStyle:'normal', fontSize:'0.7em'}}>n</sup></em>{' '}
+          a unique tuple of scalars. The body sentence stays Geist; only the math swaps to STIX italic.
+        </div>
+      </section>
+    );
+  }
+
+  // === 04 · SLIDERS ==========================================================
+  function CtlRow({ name, swatch, axes }) {
+    return (
+      <div className="ctl-row">
+        <div className="ctl-name">
+          <span className="swatch" style={{ background: swatch }} />
+          <span className="nm" dangerouslySetInnerHTML={{ __html: name }} />
+        </div>
+        {axes.map((a, i) => (
+          <div className="ctl-axis" key={i}>
+            <span className="lbl">{a.lbl}</span>
+            <input className="num-input" defaultValue={a.val} />
+            <div className="num-track">
+              <div className="fill" style={{ width: `${a.pct}%` }} />
+              <div className="knob" style={{ left: `${a.pct}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  function SlidersSection() {
+    return (
+      <section className="sg-section" id="s-04">
+        <header>
+          <span className="num">04 · Controls</span>
+          <h2>Sliders &amp; numeric controls</h2>
+          <p>
+            The slider row is the workhorse of the app — a named variable, one or more
+            axes, each axis a numeric input bound to a track. The row doubles as a
+            legend: the swatch dot beside the name matches the color the vector is
+            drawn in.
+          </p>
+        </header>
+
+        <div className="sg-stage is-roomy">
+          <span className="stage-tag">live</span>
+          <div className="sg-controls">
+            <CtlRow name="b<span style='font-size:0.7em;vertical-align:sub'>1</span>"
+              swatch="var(--v1)"
+              axes={[{ lbl: 'x', val: '1', pct: 62 }, { lbl: 'y', val: '0', pct: 50 }]} />
+            <CtlRow name="b<span style='font-size:0.7em;vertical-align:sub'>2</span>"
+              swatch="var(--v2)"
+              axes={[{ lbl: 'x', val: '0', pct: 50 }, { lbl: 'y', val: '1', pct: 62 }]} />
+            <CtlRow name="p"
+              swatch="var(--vp)"
+              axes={[{ lbl: 'x', val: '2', pct: 74 }, { lbl: 'y', val: '1', pct: 62 }]} />
+          </div>
+        </div>
+
+        <table className="tok-table">
+          <thead><tr><th style={{width:'22%'}}>Part</th><th style={{width:'30%'}}>Spec</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td className="name">Row grid</td><td className="val">86 px name · 1fr axis · 1fr axis (extend per dim)</td><td className="note">Each row keeps name column fixed so rows align across the panel.</td></tr>
+            <tr><td className="name">Swatch dot</td><td className="val">9 px circle, vector-color fill, 1 px inset shadow</td><td className="note">Always set to the same color the vector is drawn in.</td></tr>
+            <tr><td className="name">Variable name</td><td className="val">STIX italic, 15 px, --ink</td><td className="note">Subscripts italic STIX. Composite expressions wrap to two lines if needed.</td></tr>
+            <tr><td className="name">Axis label</td><td className="val">STIX italic, 12.5 px, --ink-3</td><td className="note">Single character (x, y, z, t…). Sits left of the input.</td></tr>
+            <tr><td className="name">Numeric input</td><td className="val">56 px wide, 12.5 px Geist Mono, tabular-nums, right-aligned</td><td className="note">--bg-2 fill, --line-2 border, 4 px radius. Source of truth — the track is a view onto it.</td></tr>
+            <tr><td className="name">Track</td><td className="val">4 px tall, 999 px radius, --bg-3</td><td className="note">Fill in --ink up to current value. The track stays ink, not vector color — vector color belongs to the swatch.</td></tr>
+            <tr><td className="name">Knob</td><td className="val">12 px circle, --panel fill, 1.5 px --ink stroke</td><td className="note">Centered on the track. Renders crisply against both panel and bone surfaces.</td></tr>
+          </tbody>
+        </table>
+
+        <div className="sg-note">
+          <strong>When in doubt.</strong> One numeric input per axis, one row per
+          variable. If a variable is one-dimensional (a scalar), use a single axis.
+          If it's three-dimensional, add a third axis cell — the grid extends.
+        </div>
+      </section>
+    );
+  }
+
+  // === 05 · DIMENSION TOGGLE =================================================
+  function DimToggleSection() {
+    const [dim, setDim] = React.useState(2);
+    return (
+      <section className="sg-section" id="s-05">
+        <header>
+          <span className="num">05 · Controls</span>
+          <h2>Dimension toggle</h2>
+          <p>
+            A two-state segmented control for switching the active ambient space.
+            Lives in the top-right of the concept page header and stays the same
+            shape wherever ambient dimension matters.
+          </p>
+        </header>
+
+        <div className="sg-stage" style={{ display:'flex', gap: 24, alignItems:'center' }}>
+          <span className="stage-tag">live</span>
+          <div className="dim-toggle">
+            <button className={dim === 2 ? 'is-on' : ''} onClick={() => setDim(2)}>R<sup>2</sup></button>
+            <button className={dim === 3 ? 'is-on' : ''} onClick={() => setDim(3)}>R<sup>3</sup></button>
+          </div>
+          <div style={{ fontFamily:'var(--font-mono)', fontSize:11, color:'var(--ink-3)', letterSpacing:'0.04em' }}>
+            currently · <span style={{ color:'var(--ink)' }}>R<sup>{dim}</sup></span>
+          </div>
+        </div>
+
+        <table className="tok-table">
+          <tbody>
+            <tr><td className="name">Container</td><td className="val">2 px padding, --bg-2, 1 px --line, 7 px radius</td><td className="note">Inline-flex; segments butt against each other.</td></tr>
+            <tr><td className="name">Segment</td><td className="val">STIX italic, 13.5 px, 4×14 px padding, 5 px radius</td><td className="note">Active: --panel bg, --ink text, soft 1 px shadow. Inactive: transparent bg, --ink-2 text.</td></tr>
+            <tr><td className="name">Label</td><td className="val">R + superscript (mono, 10 px, not italic)</td><td className="note">The exponent stays roman so the digit reads as an index, not a variable.</td></tr>
+          </tbody>
+        </table>
+
+        <div className="sg-note">
+          <strong>Flexible.</strong> The same shape extends to other binary or small-N
+          switches — fields (ℝ / ℂ), choice between two visualizations, "exact /
+          approximate" — by swapping the segment labels. Keep the same chrome.
+        </div>
+      </section>
+    );
+  }
+
+  // === Mini viz for gallery cards ============================================
+  function MiniBasis() {
+    return (
+      <svg viewBox="0 0 200 96" className="mini" preserveAspectRatio="none">
+        <line className="axis" x1="0" y1="64" x2="200" y2="64" />
+        <line className="axis" x1="64" y1="0" x2="64" y2="96" />
+        <line className="vec" x1="64" y1="64" x2="120" y2="64" />
+        <line className="vec-2" x1="64" y1="64" x2="64" y2="24" />
+        <line className="vec-p" x1="64" y1="64" x2="148" y2="40" />
+        <circle className="dot" cx="120" cy="64" r="2.2" />
+        <circle className="dot-2" cx="64" cy="24" r="2.2" />
+        <circle className="dot-p" cx="148" cy="40" r="2.8" />
+        <text className="label l1" x="124" y="62">b₁</text>
+        <text className="label l2" x="50" y="24">b₂</text>
+        <text className="label lp" x="152" y="38">p</text>
+      </svg>
+    );
+  }
+  function MiniSpan() {
+    return (
+      <svg viewBox="0 0 200 96" className="mini" preserveAspectRatio="none">
+        <polygon className="ribbon" points="20,88 180,12 180,40 20,92" />
+        <line className="axis" x1="0" y1="64" x2="200" y2="64" />
+        <line className="axis" x1="100" y1="0" x2="100" y2="96" />
+        <line className="vec" x1="100" y1="64" x2="160" y2="36" />
+        <circle className="dot" cx="160" cy="36" r="2.2" />
+        <text className="label l1" x="164" y="36">v₁</text>
+      </svg>
+    );
+  }
+  function MiniVectors() {
+    return (
+      <svg viewBox="0 0 200 96" className="mini" preserveAspectRatio="none">
+        <line className="axis" x1="0" y1="64" x2="200" y2="64" />
+        <line className="axis" x1="64" y1="0" x2="64" y2="96" />
+        <line className="vec" x1="64" y1="64" x2="146" y2="28" />
+        <line className="vec-2" x1="64" y1="64" x2="118" y2="78" />
+        <circle className="dot" cx="146" cy="28" r="2.2" />
+        <circle className="dot-2" cx="118" cy="78" r="2.2" />
+        <text className="label l1" x="150" y="26">u</text>
+        <text className="label l2" x="121" y="92">v</text>
+      </svg>
+    );
+  }
+
+  // === 06 · GALLERY ==========================================================
+  function GallerySection() {
+    return (
+      <section className="sg-section" id="s-06">
+        <header>
+          <span className="num">06 · Pages</span>
+          <h2>Gallery</h2>
+          <p>
+            The directory page — concepts as a grid of cards. The header sets tone,
+            then cards do the work. Hierarchy is deliberately shallow: eyebrow → page
+            title → optional subhead → grid.
+          </p>
+        </header>
+
+        <div className="sg-sub"><h3>Header hierarchy</h3><span className="tag">eyebrow · title · subhead</span></div>
+        <div className="sg-stage is-roomy is-paper">
+          <span className="stage-tag">live</span>
+          <div className="anat-gallery" style={{ borderColor: 'transparent', padding: '8px 0 0' }}>
+            <div className="eyebrow">Eyebrow · short context</div>
+            <h1>Page title</h1>
+            <p className="sub">
+              Optional one-paragraph subhead in STIX. Sets up what the page is about,
+              what to expect from the cards, and how the user should pick one.
+            </p>
+          </div>
+        </div>
+
+        <table className="tok-table">
+          <tbody>
+            <tr><td className="name">Eyebrow</td><td className="val">Geist Mono · 11 px · +0.10em · UPPERCASE · --ink-3</td><td className="note">Sits ~8 px above title. Optional.</td></tr>
+            <tr><td className="name">Title</td><td className="val">Geist 500 · 34 px · −0.025em · --ink</td><td className="note">Shorter than a sentence. No period.</td></tr>
+            <tr><td className="name">Subhead</td><td className="val">STIX · 15 px · 1.6 line-height · --ink-2 · max-width 64ch</td><td className="note">One paragraph max. Optional.</td></tr>
+          </tbody>
+        </table>
+
+        <div className="sg-sub"><h3>Card anatomy</h3><span className="tag">preview · title · teaser · meta</span></div>
+        <div className="sg-stage is-paper">
+          <span className="stage-tag">live</span>
+          <div className="annot-layer">
+            <div className="anat-card-grid">
+              <div className="anat-card">
+                <div className="preview"><MiniBasis /></div>
+                <div className="body">
+                  <div className="title">Basis</div>
+                  <p className="tease">
+                    A linearly independent spanning set — exactly enough vectors to give
+                    every point unique coordinates.
+                  </p>
+                  <div className="foot">
+                    <div className="dim-row">
+                      <span className="dim-chip">R<sup>2</sup></span>
+                      <span className="dim-chip">R<sup>3</sup></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="anat-card">
+                <div className="preview"><MiniSpan /></div>
+                <div className="body">
+                  <div className="title">Span</div>
+                  <p className="tease">
+                    The set of all linear combinations of a set of vectors — the
+                    subspace they generate.
+                  </p>
+                  <div className="foot">
+                    <div className="dim-row">
+                      <span className="dim-chip">R<sup>2</sup></span>
+                      <span className="dim-chip">R<sup>3</sup></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="anat-card">
+                <div className="preview"><MiniVectors /></div>
+                <div className="body">
+                  <div className="title">Vectors</div>
+                  <p className="tease">
+                    Directed quantities in ℝⁿ — arrows from the origin, with addition
+                    and scalar multiplication.
+                  </p>
+                  <div className="foot">
+                    <div className="dim-row">
+                      <span className="dim-chip">R<sup>2</sup></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="annot-list">
+            <div className="item"><span className="num">1</span><span><span className="term">Preview</span>130 px tall paper region with a mini viz, same vector palette as the full version. The preview is the card.</span></div>
+            <div className="item"><span className="num">2</span><span><span className="term">Title</span>Geist 500, 17 px, −0.015em tracking. One or two words; no truncation.</span></div>
+            <div className="item"><span className="num">3</span><span><span className="term">Teaser</span>STIX 13 px in --ink-2. Two-line max. No period if it ends on a clause.</span></div>
+            <div className="item"><span className="num">4</span><span><span className="term">Dimension chips</span>STIX italic R with mono superscript. List the dimensions the concept is currently visualizable in.</span></div>
+          </div>
+        </div>
+
+        <div className="sg-note">
+          <strong>Stay shallow.</strong> Resist adding chrome to cards (icons, status
+          dots, hover overlays). Let the mini-viz, title and teaser do the
+          differentiation. The grid is responsive — 3 columns at width, 2 below
+          ~960 px, 1 on mobile.
+        </div>
+      </section>
+    );
+  }
+
+  // === 07 · CONCEPT HEADER ===================================================
+  function ConceptHeaderSection() {
+    return (
+      <section className="sg-section" id="s-07">
+        <header>
+          <span className="num">07 · Pages</span>
+          <h2>Concept page · Header</h2>
+          <p>
+            One row, four anchored regions: back, optional crumb, title, dimension
+            toggle. Nothing else. The header should never grow taller than ~52 px.
+          </p>
+        </header>
+
+        <div className="sg-stage is-paper">
+          <span className="stage-tag">live</span>
+          <div className="anat-cp" style={{ borderColor:'transparent' }}>
+            <div className="cp-top">
+              <a className="back" href="#">← Concepts</a>
+              <span className="crumb">Optional · short · crumb</span>
+              <h1>Basis</h1>
+              <span className="spacer" />
+              <div className="dim-toggle">
+                <button className="is-on">R<sup>2</sup></button>
+                <button>R<sup>3</sup></button>
+              </div>
+            </div>
+            <div style={{ height: 60, background: 'var(--bg-2)', borderTop: '1px dashed var(--line-2)', display: 'grid', placeItems: 'center', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.08em', color: 'var(--ink-4)', textTransform:'uppercase', whiteSpace: 'nowrap' }}>
+              page body
+            </div>
+          </div>
+        </div>
+
+        <div className="annot-list">
+          <div className="item"><span className="num">1</span><span><span className="term">Back</span>"← Concepts" pill on --panel with --line-2 border. The only chevron in the chrome. Always returns to the directory.</span></div>
+          <div className="item"><span className="num">2</span><span><span className="term">Crumb</span>Geist Mono · 11 px · --ink-3 · +0.04em. Free-form short label for context (collection, source, edition). Omit if not useful.</span></div>
+          <div className="item"><span className="num">3</span><span><span className="term">Title</span>Geist 500 · 22 px · −0.02em. The concept's name. No subtitle in the header — that's the right rail's job.</span></div>
+          <div className="item"><span className="num">4</span><span><span className="term">Dimension toggle</span>Right-aligned. Pushed to the far right by a flexing spacer. Only present when ambient dimension is switchable.</span></div>
+        </div>
+
+        <div className="sg-note">
+          <strong>Flexible.</strong> Additional status indicators (exactness, field,
+          edit / view modes) may live in the header — but only as compact pills
+          slotted between the meta block and the spacer. If you need more, push it
+          into the viz card header instead.
+        </div>
+      </section>
+    );
+  }
+
+  // === 08 · CONCEPT BODY ====================================================
+  function BasisViz() {
+    return (
+      <svg className="viz-svg" viewBox="0 0 600 320" preserveAspectRatio="xMidYMid meet">
+        {Array.from({ length: 21 }, (_, i) => i).map(i => (
+          <line key={'fx' + i} className="grid-fine" x1={i * 30} y1="0" x2={i * 30} y2="320" />
+        ))}
+        {Array.from({ length: 12 }, (_, i) => i).map(i => (
+          <line key={'fy' + i} className="grid-fine" x1="0" y1={i * 30} x2="600" y2={i * 30} />
+        ))}
+        {Array.from({ length: 11 }, (_, i) => i).map(i => (
+          <line key={'mx' + i} className="grid-major" x1={i * 60} y1="0" x2={i * 60} y2="320" />
+        ))}
+        {Array.from({ length: 6 }, (_, i) => i).map(i => (
+          <line key={'my' + i} className="grid-major" x1="0" y1={i * 60} x2="600" y2={i * 60} />
+        ))}
+        <line className="axis" x1="0" y1="160" x2="600" y2="160" />
+        <line className="axis" x1="300" y1="0" x2="300" y2="320" />
+        <rect className="span-strip-1" x="0"   y="153" width="600" height="14" />
+        <rect className="span-strip-2" x="293" y="0"   width="14"  height="320" />
+        <line className="vec-arrow b1" x1="300" y1="160" x2="360" y2="160" />
+        <polygon points="360,160 352,155 352,165" fill="var(--v1)" />
+        <circle cx="360" cy="160" r="3.4" fill="var(--v1)" />
+        <text className="tip t1" x="364" y="176">b<tspan className="tip sub" dy="2">1</tspan></text>
+        <line className="vec-arrow b2" x1="300" y1="160" x2="300" y2="100" />
+        <polygon points="300,100 295,108 305,108" fill="var(--v2)" />
+        <circle cx="300" cy="100" r="3.4" fill="var(--v2)" />
+        <text className="tip t2" x="282" y="96">b<tspan className="tip sub" dy="2">2</tspan></text>
+        <line className="vec-arrow p" x1="300" y1="160" x2="420" y2="100" />
+        <polygon points="420,100 411,101 415,109" fill="var(--vp)" />
+        <circle cx="420" cy="100" r="4.2" fill="var(--vp)" />
+        <text className="tip tp" x="428" y="96">p</text>
+        <line className="proj-p" x1="300" y1="100" x2="420" y2="100" />
+        <line className="proj-p" x1="420" y1="160" x2="420" y2="100" />
+      </svg>
+    );
+  }
+
+  function ConceptBodySection() {
+    return (
+      <section className="sg-section" id="s-08">
+        <header>
+          <span className="num">08 · Pages</span>
+          <h2>Concept page · Body</h2>
+          <p>
+            The concept page is a two-column grid: a stage column on the left, a
+            definition rail on the right. The stage column stacks two cards — the
+            visualization, then the variables that drive it.
+          </p>
+        </header>
+
+        <div className="sg-stage is-paper" style={{ padding: 24 }}>
+          <span className="stage-tag">live</span>
+          <div className="anat-cp" style={{ borderColor:'transparent' }}>
+            <div className="cp-top">
+              <a className="back" href="#">← Concepts</a>
+              <h1>Basis</h1>
+              <span className="spacer" />
+              <div className="dim-toggle">
+                <button className="is-on">R<sup>2</sup></button>
+                <button>R<sup>3</sup></button>
+              </div>
+            </div>
+            <div className="cp-body">
+              <div className="cp-stage-col">
+                <div className="stage-viz">
+                  <div className="vh">
+                    𝓑 = {'{'} b<sub>1</sub>, b<sub>2</sub> {'}'}, &nbsp; p ∈ ℝ²
+                    <span className="grow" />
+                    <button className="ico" title="Swap">⇄</button>
+                    <button className="ico" title="Reset">↺</button>
+                    <button className="ico" title="Fullscreen">⤢</button>
+                  </div>
+                  <div className="canvas"><BasisViz /></div>
+                </div>
+                <div className="stage-controls">
+                  <CtlRow name="b<span style='font-size:0.7em;vertical-align:sub'>1</span>"
+                    swatch="var(--v1)"
+                    axes={[{ lbl: 'x', val: '1', pct: 62 }, { lbl: 'y', val: '0', pct: 50 }]} />
+                  <CtlRow name="b<span style='font-size:0.7em;vertical-align:sub'>2</span>"
+                    swatch="var(--v2)"
+                    axes={[{ lbl: 'x', val: '0', pct: 50 }, { lbl: 'y', val: '1', pct: 62 }]} />
+                  <CtlRow name="p"
+                    swatch="var(--vp)"
+                    axes={[{ lbl: 'x', val: '2', pct: 74 }, { lbl: 'y', val: '1', pct: 62 }]} />
+                </div>
+              </div>
+              <aside>
+                <div className="panel-card">
+                  <div className="h">Definition</div>
+                  <h3>What is a basis?</h3>
+                  <p>
+                    A <strong style={{ fontFamily:'var(--font-sans)', fontWeight:500 }}>basis</strong>{' '}
+                    is a linearly independent set that spans the whole space — exactly
+                    enough vectors to describe any point <em>uniquely</em>.
+                  </p>
+                  <div className="stmt">
+                    ∀ p ∈ ℝ<sup>n</sup>, ∃! (α<sub>1</sub>, …, α<sub>n</sub>): &nbsp;
+                    p = α<sub>1</sub>b<sub>1</sub> + ⋯ + α<sub>n</sub>b<sub>n</sub>
+                  </div>
+                  <div className="cite">Optional citation slot</div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+
+        <div className="sg-sub"><h3>The three-block stack</h3><span className="tag">graph · variables · definition</span></div>
+        <div className="annot-list">
+          <div className="item"><span className="num">1</span><span><span className="term">Visualization card</span>The graph or diagram. Header strip carries the formal source expression in STIX; a small set of icon buttons (swap / reset / fullscreen) sit to the right. Canvas fills the rest.</span></div>
+          <div className="item"><span className="num">2</span><span><span className="term">Variables card</span>Sits below the viz. One slider row per variable, each row's swatch matching the vector's color in the canvas above. The variables card is also the legend.</span></div>
+          <div className="item"><span className="num">3</span><span><span className="term">Definition rail</span>Right column (~340 px). One or more <code>panel-card</code>s, each with a mono eyebrow, a Geist heading, STIX body copy, and optional centered "stmt" boxes for formal statements.</span></div>
+          <div className="item"><span className="num">4</span><span><span className="term">Grid</span>1fr ·  340 px on wide screens. Below ~960 px the rail collapses below the stage column. The two stage cards never reflow side-by-side.</span></div>
+        </div>
+
+        <div className="sg-note">
+          <strong>The shape is the contract, not the contents.</strong> The viz card
+          may hold a 2D plot, a 3D scene, a matrix grid, a graph diagram — anything.
+          The variables card always sits below it and always speaks in slider rows.
+          The right rail may be a single definition card or a small stack — it
+          stays the same width.
+        </div>
+
+        <div className="sg-sub"><h3>Panel card</h3><span className="tag">eyebrow · heading · body · stmt · cite</span></div>
+        <table className="tok-table">
+          <tbody>
+            <tr><td className="name">Container</td><td className="val">--panel bg, 1 px --line, 10 px radius, 18 / 20 px padding</td><td className="note">Same chrome as the viz / variables cards. The rail is a column of these.</td></tr>
+            <tr><td className="name">Eyebrow</td><td className="val">Geist Mono · 11 px · UPPERCASE · --ink-3</td><td className="note">Category — Definition, Related, Examples, etc.</td></tr>
+            <tr><td className="name">Heading</td><td className="val">Geist 500 · 17 px · −0.015em · --ink</td><td className="note">Short. A sentence is too long.</td></tr>
+            <tr><td className="name">Body</td><td className="val">STIX · 14.5 px · 1.55 line-height · --ink</td><td className="note">Math copy. Variables inline in italic.</td></tr>
+            <tr><td className="name">Stmt</td><td className="val">--bg-2 fill, 5 px radius, STIX 14 px, centered</td><td className="note">Reserved for formal expressions you want set off. Stack 1–3 per card.</td></tr>
+            <tr><td className="name">Cite</td><td className="val">Geist Mono · 11 px · --ink-3</td><td className="note">Optional source line. Keep neutral — no link styling.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    );
+  }
+
+  // === root ==================================================================
+  function App() {
+    return (
+      <div className="sg-shell">
+        <Cover />
+        <ColorSection />
+        <TypeSection />
+        <LabelsSection />
+        <SlidersSection />
+        <DimToggleSection />
+        <GallerySection />
+        <ConceptHeaderSection />
+        <ConceptBodySection />
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+</body>
+</html>
