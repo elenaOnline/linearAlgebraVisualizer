@@ -5,7 +5,7 @@ import styles from './App.module.css'
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/linearAlgebraVisualizer">
       <div className={styles.appShell}>
         <Routes>
           <Route path="/" element={<Home />} />
